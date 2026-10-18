@@ -104,7 +104,7 @@
       clave = e.target.clave.value.trim();
       cargando(btn, "Comprobando…");
       try { await api({ accion: "entrar" }); ss.set(clave); await escritorio(); }
-      catch (err) { clave = null; pantallaEntrar(err.message === "Clave incorrecta" ? "Clave incorrecta. Pregunta a quien gestiona la web." : err.message); }
+      catch (err) { clave = null; pantallaEntrar(err.message === "Clave incorrecta" ? "Clave incorrecta. Pregunta a quien gestiona la web." : /^Falta poner la clave/.test(err.message) ? "El servidor de Google aún no tiene clave. Escríbela en la línea «const CLAVE» del script y publica una nueva versión." : err.message); }
     });
   }
 

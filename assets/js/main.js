@@ -41,12 +41,12 @@
       { id: "oraciones", texto: "Oraciones", href: "oraciones.html", desc: "Oraciones e himno" },
       { id: "documentos", texto: "Documentos del centro", href: "documentos.html", desc: "Proyecto, actas y memoria" }
     ] },
-    { id: "quienes-somos", texto: "Quiénes somos", href: "quienes-somos.html" },
-    { id: "provincia", texto: "Provincia", href: "provincia.html" },
     { id: "calendario", texto: "Calendario", href: "calendario.html", hijos: [
       { id: "calendario-mes", texto: "Calendario", href: "calendario.html#mes", desc: "Vista del mes con símbolos" },
       { id: "calendario-prox", texto: "Próximos encuentros", href: "calendario.html#proximos", desc: "La lista de lo que viene" }
     ] },
+    { id: "quienes-somos", texto: "Quiénes somos", href: "quienes-somos.html" },
+    { id: "provincia", texto: "Provincia", href: "provincia.html" },
     { id: "avisos", texto: "Avisos", href: "avisos.html" },
     { id: "enviar", texto: "Enviar material", href: "enviar.html", cta: true }
   ];
