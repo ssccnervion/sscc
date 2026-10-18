@@ -28,7 +28,7 @@ window.SSCC_CONFIG = {
   /* CONEXIÓN CON GOOGLE (recomendado). URL de la aplicación web de Apps Script
      (google/Codigo.gs). Con ella funcionan el panel de gestión (panel.html) y
      el formulario «Enviar material», y el material se guarda en el Drive del centro. */
-  apiGoogle: "",
+  apiGoogle: "https://script.google.com/macros/s/AKfycbxYV659SyvwuaPAbUx2yBjy1tPFO2HQQXw1UszZ-3Ne5NFNOGNOCmUDnNVJUYZTbzeV/exec",
 
   /* (Alternativa antigua) Hoja de cálculo de Google publicada como CSV.
      Si se rellena, la web carga TODO el material desde la hoja
