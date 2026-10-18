@@ -1,6 +1,6 @@
 /* Service worker · Salesianos Cooperadores Nervión
    Cambia VERSION cada vez que publiques cambios en el diseño para que la app se actualice. */
-const VERSION = "sscc-v6";
+const VERSION = "sscc-v7";
 const NUCLEO = [
   "./", "index.html", "temas.html", "oraciones.html", "quienes-somos.html", "provincia.html",
   "avisos.html", "enviar.html", "documentos.html", "material.html", "calendario.html", "offline.html", "manifest.webmanifest",

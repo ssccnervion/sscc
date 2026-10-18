@@ -37,13 +37,13 @@
   const NAV = [
     { id: "inicio", texto: "Inicio", href: "index.html" },
     { id: "material", texto: "Material", href: "material.html", hijos: [
-      { id: "temas", texto: "Temas", href: "temas.html", desc: "Formación de cada curso" },
-      { id: "oraciones", texto: "Oraciones", href: "oraciones.html", desc: "Oraciones e himno" },
-      { id: "documentos", texto: "Documentos del centro", href: "documentos.html", desc: "Proyecto, actas y memoria" }
+      { id: "temas", cod: "1A", texto: "Temas", href: "temas.html", desc: "Formación de cada curso" },
+      { id: "oraciones", cod: "1B", texto: "Oraciones", href: "oraciones.html", desc: "Oraciones e himno" },
+      { id: "documentos", cod: "1C", texto: "Documentos del centro", href: "documentos.html", desc: "Proyecto, actas y memoria" }
     ] },
     { id: "calendario", texto: "Calendario", href: "calendario.html", hijos: [
-      { id: "calendario-mes", texto: "Calendario", href: "calendario.html#mes", desc: "Vista del mes con símbolos" },
-      { id: "calendario-prox", texto: "Próximos encuentros", href: "calendario.html#proximos", desc: "La lista de lo que viene" }
+      { id: "calendario-mes", cod: "2A", texto: "Calendario", href: "calendario.html#mes", desc: "Vista del mes con símbolos" },
+      { id: "calendario-prox", cod: "2B", texto: "Próximos encuentros", href: "calendario.html#proximos", desc: "La lista de lo que viene" }
     ] },
     { id: "quienes-somos", texto: "Quiénes somos", href: "quienes-somos.html" },
     { id: "provincia", texto: "Provincia", href: "provincia.html" },
@@ -77,7 +77,7 @@
               const activo = n.id === PAGINA || (n.hijos || []).some((h) => h.id === PAGINA);
               if (!n.hijos) return `<li><a href="${n.href}"${n.cta ? ' class="menu-cta"' : ""}${activo ? ' aria-current="page"' : ""}>${n.texto}</a></li>`;
               return `<li class="con-sub"><a href="${n.href}"${activo ? ' aria-current="page"' : ""}>${n.texto}<svg class="flechita" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
-                <div class="submenu">${n.hijos.map((h) => `<a href="${h.href}"${h.id === PAGINA ? ' aria-current="true"' : ""}><b>${h.texto}</b><small>${h.desc}</small></a>`).join("")}</div></li>`;
+                <div class="submenu">${n.hijos.map((h) => `<a href="${h.href}"${h.id === PAGINA ? ' aria-current="true"' : ""}><b>${h.cod ? `<span class="cod">${h.cod}</span> ` : ""}${h.texto}</b><small>${h.desc}</small></a>`).join("")}</div></li>`;
             }).join("")}
           </ul>
         </nav>
@@ -869,6 +869,27 @@
   }
 
 
+
+  /* ------------------------------------- Suscripción al calendario (.ics) */
+  function suscripcion(raiz) {
+    const https = location.origin + "/calendario.ics";
+    const webcal = https.replace(/^https?:/, "webcal:");
+    const nombre = "SSCC " + (CFG.centro || "Nervión");
+    const enlaces = {
+      google: "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(webcal),
+      apple: webcal,
+      outlook: "https://outlook.live.com/calendar/0/addfromweb?url=" + encodeURIComponent(https) + "&name=" + encodeURIComponent(nombre)
+    };
+    $$("[data-sus]", raiz).forEach((b) => { if (enlaces[b.dataset.sus]) b.href = enlaces[b.dataset.sus]; });
+    const copiar = $('[data-sus="copiar"]', raiz);
+    copiar.addEventListener("click", async () => {
+      const txt = $(".sus-copiado", copiar);
+      try { await navigator.clipboard.writeText(https); txt.textContent = "¡Enlace copiado!"; }
+      catch (e) { prompt("Copia este enlace:", https); }
+      setTimeout(() => (txt.textContent = "Para otras aplicaciones"), 2500);
+    });
+  }
+
   /* --------------------------------------- Próximos encuentros (lista) */
   function proximos(raiz, items) {
     const N = Number(raiz.dataset.cantidad || 12);
@@ -1115,6 +1136,7 @@
     $$("[data-citas]").forEach(citas);
     $$("form[data-envio]").forEach(formularioEnvio);
     $$("[data-reproductor]").forEach(reproductor);
+    $$("[data-suscripcion]").forEach(suscripcion);
     if (PAGINA === "panel") return; // el panel carga sus propios datos
 
     const items = await cargarContenido();

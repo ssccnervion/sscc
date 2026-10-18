@@ -19,6 +19,8 @@ sscc-nervion-web/
 ├── offline.html          Página que se ve sin conexión
 ├── manifest.webmanifest  Datos de la app (nombre, iconos, colores)
 ├── sw.js                 Funcionamiento sin conexión de la app
+├── api/calendario.js     Calendario para suscribirse (/calendario.ics, lo ejecuta Vercel)
+├── vercel.json           Dirección corta /calendario.ics
 ├── assets/
 │   ├── js/config.js      ← AJUSTES (correo, Google, encuentros…)
 │   ├── js/contenido.js   ← MATERIAL (si no usáis la hoja de Google)
@@ -113,6 +115,10 @@ Alternativa: crea un Formulario de Google y pega su enlace de inserción en `con
 - **Netlify Drop** (lo más fácil): entra en https://app.netlify.com/drop con la cuenta de Google y arrastra esta carpeta. Te da una dirección pública al momento.
 - **GitHub Pages**: sube la carpeta a un repositorio y activa *Settings → Pages*.
 - **Dominio propio** (opcional): ambos permiten conectar uno tipo `ssccnervion.org`.
+
+## Suscripción al calendario
+
+`https://sscc-nervion.vercel.app/calendario.ics` es un calendario «vivo» (formato iCalendar) con todas las fechas: las de `contenido.js` y las publicadas desde el panel. En la página Calendario hay botones para añadirlo a Google Calendar, iPhone/Mac y Outlook. Los calendarios lo vuelven a leer solos cada pocas horas (Google puede tardar hasta un día). Solo funciona en la web publicada en Vercel, no en una vista previa local.
 
 ## App (PWA) e imagen al compartir
 

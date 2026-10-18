@@ -1366,3 +1366,34 @@ body[data-pagina="panel"] .toast-aviso { display: none; }
 .enlace-calendario b { display: block; color: #fff; font-size: 1.4rem; }
 .ec-ico { width: 60px; height: 66px; display: grid; place-items: center; background: var(--oro); color: var(--tinta); clip-path: var(--hex); }
 .ec-ico svg { width: 28px; height: 28px; }
+
+/* ======================================== SUSCRIPCIÓN AL CALENDARIO */
+.suscripcion {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(22px, 4vw, 50px); align-items: center;
+  padding: clamp(26px, 4vw, 48px);
+  border-radius: calc(var(--radio) + 8px);
+  background: radial-gradient(70% 90% at 0% 100%, rgba(36,152,171,0.5), transparent 60%), linear-gradient(140deg, var(--azul), var(--azul-hondo));
+  color: rgba(255,255,255,0.88);
+  box-shadow: var(--sombra-alta);
+}
+@media (max-width: 860px) { .suscripcion { grid-template-columns: 1fr; } }
+.suscripcion .petalo--a { right: -60px; bottom: -100px; opacity: 0.3; }
+.suscripcion h2 { color: #fff; }
+.suscripcion .kicker { color: var(--oro); }
+.sus-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .sus-botones { grid-template-columns: 1fr; } }
+.sus-btn {
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  padding: 14px 16px; border-radius: var(--radio-sm); border: 0;
+  background: rgba(255,255,255,0.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+  color: #fff; text-decoration: none; font: inherit; cursor: pointer;
+  transition: transform 0.4s var(--ease), background 0.3s;
+}
+.sus-btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.18); }
+.sus-btn b { display: block; color: #fff; font-size: 0.98rem; }
+.sus-btn small { display: block; font-size: 0.78rem; color: rgba(255,255,255,0.75); }
+.sus-ico { width: 42px; height: 46px; flex: none; display: grid; place-items: center; background: var(--oro); color: var(--tinta); clip-path: var(--hex); }
+.sus-ico svg { width: 20px; height: 20px; }
+.submenu .cod { display: inline-block; min-width: 26px; font-size: 0.7rem; color: var(--turquesa); letter-spacing: 0.04em; }
+@media (max-width: 900px) { .submenu .cod { color: var(--oro); } }
