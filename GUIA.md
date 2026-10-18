@@ -13,6 +13,9 @@ sscc-nervion-web/
 ├── provincia.html        Provincia María Auxiliadora
 ├── avisos.html           Avisos y calendario
 ├── enviar.html           Formulario «Enviar material»
+├── offline.html          Página que se ve sin conexión
+├── manifest.webmanifest  Datos de la app (nombre, iconos, colores)
+├── sw.js                 Funcionamiento sin conexión de la app
 ├── assets/
 │   ├── js/config.js      ← AJUSTES (correo, Google, encuentros…)
 │   ├── js/contenido.js   ← MATERIAL (si no usáis la hoja de Google)
@@ -81,6 +84,13 @@ Alternativa: crea un Formulario de Google y pega su enlace de inserción en `con
 - **Netlify Drop** (lo más fácil): entra en https://app.netlify.com/drop con la cuenta de Google y arrastra esta carpeta. Te da una dirección pública al momento.
 - **GitHub Pages**: sube la carpeta a un repositorio y activa *Settings → Pages*.
 - **Dominio propio** (opcional): ambos permiten conectar uno tipo `ssccnervion.org`.
+
+## App (PWA) e imagen al compartir
+
+- **App instalable**: la web se puede instalar como app desde el botón «App» de la cabecera, la sección «Llévanos en el bolsillo» de la portada o el pie. En Android y ordenador abre la instalación directa; en iPhone muestra los pasos (Safari → Compartir → Añadir a pantalla de inicio). La app funciona sin conexión con las páginas ya visitadas.
+- **Al publicar cambios de diseño**, sube el número de `VERSION` en `sw.js` (p. ej. `sscc-v2`) para que las apps instaladas se actualicen.
+- **Icono de la app**: `assets/img/icon-*.png` (diseño original en `app-icon-1024.png`).
+- **Imagen al compartir por WhatsApp**: `assets/img/compartir.jpg` (1200×630). WhatsApp necesita la dirección completa de la web: en todas las páginas `.html` busca `https://TU_USUARIO.github.io/sscc-nervion-web/` y sustitúyelo por la dirección real. WhatsApp guarda la vista previa un tiempo; si no cambia, prueba a compartir el enlace añadiendo `?v=2` al final.
 
 ## Personalizar
 

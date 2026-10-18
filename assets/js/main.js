@@ -68,6 +68,9 @@
             ${NAV.map((n) => `<li><a href="${n.href}"${n.cta ? ' class="menu-cta"' : ""}${n.id === PAGINA ? ' aria-current="page"' : ""}>${n.texto}</a></li>`).join("")}
           </ul>
         </nav>
+        <button class="btn-app-cab" data-instalar hidden aria-label="Descargar la app">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>App</span>
+        </button>
         <button class="hamburguesa" aria-label="Abrir menú" aria-controls="menu" aria-expanded="false"><i></i><i></i><i></i></button>
       </div>`;
     document.body.prepend(header);
@@ -106,7 +109,7 @@
         </div>
         <div>
           <h4>Secciones</h4>
-          <ul>${NAV.slice(1).map((n) => `<li><a href="${n.href}">${n.texto}</a></li>`).join("")}</ul>
+          <ul>${NAV.slice(1).map((n) => `<li><a href="${n.href}">${n.texto}</a></li>`).join("")}<li><a href="#" data-instalar hidden>📲 Descargar la app</a></li></ul>
         </div>
         <div>
           <h4>Contacto</h4>
@@ -746,6 +749,84 @@
     });
   }
 
+
+  /* ------------------------------------------------- App instalable (PWA) */
+  let promptInstalar = null;
+  const esStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const esIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  function registrarSW() {
+    if (!("serviceWorker" in navigator) || !/^https?:$/.test(location.protocol)) return;
+    addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch((e) => console.warn("SW:", e)));
+  }
+
+  function modalApp() {
+    let m = $(".modal-app");
+    if (m) return m;
+    m = document.createElement("div");
+    m.className = "visor modal-app";
+    m.setAttribute("role", "dialog");
+    m.setAttribute("aria-modal", "true");
+    m.setAttribute("aria-labelledby", "modal-app-titulo");
+    const ios = esIOS();
+    m.innerHTML = `
+      <div class="caja">
+        <button class="cerrar" aria-label="Cerrar">${I.cerrar}</button>
+        <div class="app-modal-cuerpo">
+          <img class="app-modal-icono" src="assets/img/icon-192.png" alt="">
+          <h3 id="modal-app-titulo">Instala la app SSCC Nervión</h3>
+          <p>Tendrás los temas, oraciones, avisos y el calendario a un toque, también sin conexión.</p>
+          <ol class="pasos-app">
+            ${ios ? `
+              <li><span class="paso-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg></span><div>Abre esta web en <b>Safari</b> y pulsa el botón <b>Compartir</b>.</div></li>
+              <li><span class="paso-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span><div>Elige <b>Añadir a pantalla de inicio</b>.</div></li>
+              <li><span class="paso-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><div>Pulsa <b>Añadir</b>. ¡Ya la tienes junto a tus apps!</div></li>` : `
+              <li><span class="paso-ico"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></span><div>Abre el <b>menú del navegador</b> (los tres puntos ⋮).</div></li>
+              <li><span class="paso-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></span><div>Pulsa <b>Instalar aplicación</b> o <b>Añadir a pantalla de inicio</b>.</div></li>
+              <li><span class="paso-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><div>Confirma y la app aparecerá con el logo del centro.</div></li>`}
+          </ol>
+        </div>
+      </div>`;
+    document.body.append(m);
+    const cerrar = () => { m.classList.remove("abierto"); document.body.style.overflow = ""; };
+    $(".cerrar", m).addEventListener("click", cerrar);
+    m.addEventListener("click", (e) => { if (e.target === m) cerrar(); });
+    addEventListener("keydown", (e) => { if (e.key === "Escape") cerrar(); });
+    return m;
+  }
+
+  function instalable() {
+    const botones = () => $$("[data-instalar]");
+    if (esStandalone()) {
+      botones().forEach((b) => b.remove());
+      $$("[data-seccion-app]").forEach((x) => x.remove());
+      document.body.classList.add("modo-app");
+      return;
+    }
+    botones().forEach((b) => (b.hidden = false));
+    addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); promptInstalar = e; });
+    addEventListener("appinstalled", () => {
+      promptInstalar = null;
+      botones().forEach((b) => b.remove());
+      $$("[data-seccion-app]").forEach((s) => s.remove());
+    });
+    document.addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-instalar]");
+      if (!b) return;
+      e.preventDefault();
+      if (promptInstalar) {
+        promptInstalar.prompt();
+        await promptInstalar.userChoice;
+        promptInstalar = null;
+      } else {
+        const m = modalApp();
+        m.classList.add("abierto");
+        document.body.style.overflow = "hidden";
+        $(".cerrar", m).focus();
+      }
+    });
+  }
+
   /* -------------------------------------------- Citas de Don Bosco */
   function citas(raiz) {
     const lista = JSON.parse(raiz.dataset.citas || "[]");
@@ -799,6 +880,8 @@
     pintarPie();
     transiciones();
     rellenarConfig();
+    registrarSW();
+    instalable();
     $$(".hero canvas, .page-hero canvas").forEach((c) => campoHexagonos(c, { densidad: c.closest(".hero") ? 30 : 16 }));
     efectosTarjetas();
     revelar();

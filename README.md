@@ -19,6 +19,9 @@ Es una web estática (HTML, CSS y JavaScript), sin instalaciones ni base de dato
      ```
 3. En el repositorio: *Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save*.
 4. En uno o dos minutos la web estará en `https://TU_USUARIO.github.io/sscc-nervion-web/`.
+5. Para que se vea la imagen al compartir por WhatsApp, sustituye en todos los `.html` el texto `https://TU_USUARIO.github.io/sscc-nervion-web/` por la dirección real.
+
+La web es una **PWA**: GitHub Pages sirve con HTTPS, así que desde el móvil se puede instalar como app.
 
 ## Actualizar el contenido
 

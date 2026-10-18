@@ -2,11 +2,33 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Salesianos Cooperadores · Centro Nervión (Sevilla)</title>
   <meta name="description" content="Espacio del Centro de Salesianos Cooperadores de Nervión (Sevilla): temas de formación, oraciones, quiénes somos y comunicados de la Provincia María Auxiliadora.">
   <meta name="theme-color" content="#006a92">
-  <link rel="icon" href="assets/img/favicon.png">
+  <!-- Iconos y app (PWA) -->
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SSCC Nervión">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- Vista previa al compartir (WhatsApp, Telegram, redes) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Salesianos Cooperadores · Centro Nervión">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Salesianos Cooperadores · Centro Nervión (Sevilla)">
+  <meta property="og:description" content="Espacio del Centro de Salesianos Cooperadores de Nervión (Sevilla): temas de formación, oraciones, quiénes somos y comunicados de la Provincia María Auxiliadora.">
+  <meta property="og:url" content="https://TU_USUARIO.github.io/sscc-nervion-web/">
+  <meta property="og:image" content="https://TU_USUARIO.github.io/sscc-nervion-web/assets/img/compartir.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Salesianos Cooperadores · Centro Nervión · Sevilla">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://TU_USUARIO.github.io/sscc-nervion-web/assets/img/compartir.jpg">
   <link rel="preload" href="assets/fonts/Gilroy-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
@@ -126,6 +148,34 @@
         <a class="btn btn--linea" href="temas.html">Ver todo</a>
       </div>
       <div class="rejilla" data-ultimos data-cantidad="6"></div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--azul seccion-app" data-seccion-app>
+    <span class="petalo petalo--a"></span>
+    <div class="contenedor dos-col">
+      <div class="revelar">
+        <span class="kicker">App del centro</span>
+        <h2>Llévanos en el <span style="color:var(--oro)">bolsillo</span></h2>
+        <p>Instala la web como una app en tu móvil u ordenador: sin tiendas, gratis y sin ocupar casi espacio.</p>
+        <ul class="ventajas-app">
+          <li><b>Acceso directo</b> con el logo del centro en tu pantalla de inicio.</li>
+          <li><b>Sin conexión</b>: las páginas que visites siguen disponibles.</li>
+          <li><b>Avisos y calendario</b> siempre al día.</li>
+        </ul>
+        <button class="btn btn--oro" data-instalar hidden>Descargar la app <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
+      </div>
+      <div class="movil revelar" style="--d:.1s" aria-hidden="true">
+        <div class="movil-pantalla">
+          <div class="movil-hora">9:41</div>
+          <div class="movil-apps">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span class="movil-nuestra"><img src="assets/img/icon-192.png" alt=""><small>SSCC Nervión</small></span>
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 

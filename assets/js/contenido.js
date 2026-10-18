@@ -26,9 +26,47 @@
    ========================================================================= */
 window.SSCC_CONTENIDO = [
   /* -------------------------- CALENDARIO -------------------------- */
-  { seccion: "calendario", titulo: "Encuentro de formación (ejemplo)", fecha: "2026-11-07", hora: "18:00", lugar: "Salesianos Nervión" },
-  { seccion: "calendario", titulo: "Retiro de Adviento (ejemplo)", fecha: "2026-11-21", hora: "10:00", lugar: "Por confirmar" },
-  { seccion: "calendario", titulo: "Eucaristía y convivencia de Navidad (ejemplo)", fecha: "2026-12-12", hora: "19:00", lugar: "Salesianos Nervión" },
+  // Primer trimestre del curso 2026-27 (calendario «Impulsados a actuar»)
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-10-05", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-10-05", hora: "19:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-10-05", hora: "19:15", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-10-09", hora: "17:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Esther)", fecha: "2026-10-11", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-10-11", hora: "18:30", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-10-19", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-10-19", hora: "19:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-10-19", hora: "19:15", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-10-23", hora: "17:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Esther)", fecha: "2026-10-25", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Misa María Auxiliadora", fecha: "2026-10-25", hora: "19:30", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-11-06", hora: "17:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Convivencia Centro SSCC", fecha: "2026-11-08", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Eucaristía con Hogares Don Bosco", fecha: "2026-11-08", hora: "19:30", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-16", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-11-16", hora: "19:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-16", hora: "19:15", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-11-20", hora: "17:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Esther)", fecha: "2026-11-22", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-22", hora: "18:30", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-23", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-11-23", hora: "19:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-23", hora: "19:15", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Adoración + Misa María Auxiliadora", fecha: "2026-11-24", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-30", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-11-30", hora: "19:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-30", hora: "19:15", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-12-04", hora: "17:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Retiro de Adviento", fecha: "2026-12-13", hora: "16:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Eucaristía (incluida en el retiro)", fecha: "2026-12-13", hora: "19:30", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-12-14", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-12-14", hora: "19:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-12-14", hora: "19:15", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-12-18", hora: "17:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Convivencia de Navidad", fecha: "2026-12-20", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Aspirantes (Esther)", fecha: "2026-12-20", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-12-20", hora: "18:30", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Nochebuena", fecha: "2026-12-24", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Navidad", fecha: "2026-12-25", curso: "2026-27" },
 
   /* ---------------------------- AVISOS --------------------------- */
   {
@@ -39,19 +77,19 @@ window.SSCC_CONTENIDO = [
   },
   {
     seccion: "avisos",
-    titulo: "Inscripción al retiro de Adviento (ejemplo)",
-    fecha: "2026-10-16",
-    caduca: "2026-11-20",
+    titulo: "La Misa del sábado 24 pasa al domingo 25 a las 19:30",
+    fecha: "2026-10-18",
+    caduca: "2026-10-25",
     destacado: true,
-    texto: "Aviso de ejemplo para mostrar cómo se ve un aviso importante. Indica aquí la fecha, el lugar y cómo apuntarse.",
-    url: ""
+    texto: "Este mes la Misa de María Auxiliadora no será el sábado 24: la celebramos el domingo 25 de octubre a las 19:30."
   },
   {
     seccion: "avisos",
-    titulo: "Encuentro de inicio de curso (ejemplo)",
-    fecha: "2026-09-20",
-    caduca: "2026-09-27",
-    texto: "Aviso ya caducado: aparece en «Avisos anteriores»."
+    titulo: "Calendario del primer trimestre",
+    fecha: "2026-10-13",
+    caduca: "2026-12-25",
+    texto: "Ya tenéis las fechas de octubre, noviembre y diciembre del curso 2026-27 «Impulsados a actuar». Están todas en el calendario de la web y podéis añadirlas a vuestro móvil con un clic.",
+    url: "material/calendario/primer-trimestre-2026-27.jpg"
   },
 
   /* ---------------------------- TEMAS ---------------------------- */
