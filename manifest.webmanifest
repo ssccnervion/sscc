@@ -18,10 +18,10 @@
     { "src": "assets/img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Avisos y calendario", "short_name": "Avisos", "url": "./avisos.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Temas", "url": "./temas.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Oraciones", "url": "./oraciones.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Documentos del centro", "short_name": "Documentos", "url": "./documentos.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Calendario", "url": "./calendario.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Avisos", "url": "./avisos.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Material", "url": "./material.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Provincia", "url": "./provincia.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
     { "name": "Enviar material", "short_name": "Enviar", "url": "./enviar.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] }
   ]
 }

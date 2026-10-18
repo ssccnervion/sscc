@@ -25,21 +25,28 @@
     texto: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v18M6 9h12"/></svg>',
     correo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
     lugar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+    imagen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5-9 8"/></svg>',
     reloj: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
   };
 
   const TIPOS = {
     pdf: "PDF", video: "Vídeo", audio: "Audio", presentacion: "Presentación",
-    documento: "Documento", carpeta: "Carpeta", enlace: "Enlace", texto: "Texto"
+    documento: "Documento", carpeta: "Carpeta", enlace: "Enlace", texto: "Texto", imagen: "Imagen"
   };
 
   const NAV = [
     { id: "inicio", texto: "Inicio", href: "index.html" },
-    { id: "temas", texto: "Temas", href: "temas.html" },
-    { id: "oraciones", texto: "Oraciones", href: "oraciones.html" },
+    { id: "material", texto: "Material", href: "material.html", hijos: [
+      { id: "temas", texto: "Temas", href: "temas.html", desc: "Formación de cada curso" },
+      { id: "oraciones", texto: "Oraciones", href: "oraciones.html", desc: "Oraciones e himno" },
+      { id: "documentos", texto: "Documentos del centro", href: "documentos.html", desc: "Proyecto, actas y memoria" }
+    ] },
     { id: "quienes-somos", texto: "Quiénes somos", href: "quienes-somos.html" },
     { id: "provincia", texto: "Provincia", href: "provincia.html" },
-    { id: "documentos", texto: "Documentos", href: "documentos.html" },
+    { id: "calendario", texto: "Calendario", href: "calendario.html", hijos: [
+      { id: "calendario-mes", texto: "Calendario", href: "calendario.html#mes", desc: "Vista del mes con símbolos" },
+      { id: "calendario-prox", texto: "Próximos encuentros", href: "calendario.html#proximos", desc: "La lista de lo que viene" }
+    ] },
     { id: "avisos", texto: "Avisos", href: "avisos.html" },
     { id: "enviar", texto: "Enviar material", href: "enviar.html", cta: true }
   ];
@@ -66,7 +73,12 @@
         </a>
         <nav aria-label="Principal">
           <ul class="menu" id="menu">
-            ${NAV.map((n) => `<li><a href="${n.href}"${n.cta ? ' class="menu-cta"' : ""}${n.id === PAGINA ? ' aria-current="page"' : ""}>${n.texto}</a></li>`).join("")}
+            ${NAV.map((n) => {
+              const activo = n.id === PAGINA || (n.hijos || []).some((h) => h.id === PAGINA);
+              if (!n.hijos) return `<li><a href="${n.href}"${n.cta ? ' class="menu-cta"' : ""}${activo ? ' aria-current="page"' : ""}>${n.texto}</a></li>`;
+              return `<li class="con-sub"><a href="${n.href}"${activo ? ' aria-current="page"' : ""}>${n.texto}<svg class="flechita" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+                <div class="submenu">${n.hijos.map((h) => `<a href="${h.href}"${h.id === PAGINA ? ' aria-current="true"' : ""}><b>${h.texto}</b><small>${h.desc}</small></a>`).join("")}</div></li>`;
+            }).join("")}
           </ul>
         </nav>
         <button class="btn-app-cab" data-instalar hidden aria-label="Descargar la app">
@@ -110,7 +122,7 @@
         </div>
         <div>
           <h4>Secciones</h4>
-          <ul>${NAV.slice(1).map((n) => `<li><a href="${n.href}">${n.texto}</a></li>`).join("")}<li><a href="#" data-instalar hidden>📲 Descargar la app</a></li></ul>
+          <ul>${NAV.slice(1).flatMap((n) => [n, ...(n.hijos || [])]).map((n) => `<li><a href="${n.href}">${n.texto}</a></li>`).join("")}<li><a href="#" data-instalar hidden>📲 Descargar la app</a></li></ul>
         </div>
         <div>
           <h4>Contacto</h4>
@@ -123,7 +135,7 @@
           </ul>
         </div>
         <div class="final">
-          <span>© ${anio} Asociación de Salesianos Cooperadores · ${esc(CFG.centro)}</span>
+          <span>© ${anio} Asociación de Salesianos Cooperadores · ${esc(CFG.centro)} · <a href="panel.html">Gestión</a></span>
           <span><img src="assets/img/logo-csjm.png" alt="Cooperación Salesiana para los Jóvenes del Mundo"></span>
         </div>
       </div>
@@ -275,14 +287,51 @@
       etiquetas, destacado,
       texto: it.texto || "",
       caduca: it.caduca || "",
+      id: it.id || "",
       hora: it.hora || "",
-      archivo: (it.archivo || "").trim(),
+      archivo: /^https?:/.test(it.archivo || "") ? it.archivo.trim() : "",
       lugar: it.lugar || ""
     };
   }
 
+  /* Conexión con Google (Apps Script): lectura y escritura */
+  async function llamarAPI(datos) {
+    if (!CFG.apiGoogle) throw new Error("La web aún no está conectada con Google (config.js → apiGoogle).");
+    const r = await fetch(CFG.apiGoogle, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(datos)
+    });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || "Error del servidor");
+    return j;
+  }
+
+  function archivoABase64(file) {
+    return new Promise((ok, mal) => {
+      const lector = new FileReader();
+      lector.onload = () => ok({ nombre: file.name, tipo: file.type || "application/octet-stream", base64: String(lector.result).split(",")[1] });
+      lector.onerror = () => mal(lector.error);
+      lector.readAsDataURL(file);
+    });
+  }
+
+  async function contenidoGoogle() {
+    const CLAVE_CACHE = "sscc-contenido-google";
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 8000);
+      const r = await fetch(CFG.apiGoogle + (CFG.apiGoogle.includes("?") ? "&" : "?") + "accion=contenido", { signal: ctrl.signal });
+      clearTimeout(t);
+      const j = await r.json();
+      if (j.ok) { lsSet(CLAVE_CACHE, JSON.stringify(j.items)); return j.items; }
+    } catch (err) { console.warn("No se pudo leer el contenido de Google; uso la última copia", err); }
+    try { return JSON.parse(lsGet(CLAVE_CACHE) || "[]"); } catch (e) { return []; }
+  }
+
   async function cargarContenido() {
     let datos = window.SSCC_CONTENIDO || [];
+    if (CFG.apiGoogle) datos = [...(await contenidoGoogle()), ...datos];
     if (CFG.hojaCalculoCSV) {
       try {
         const r = await fetch(CFG.hojaCalculoCSV, { cache: "no-store" });
@@ -307,9 +356,10 @@
       const fin = m[1] === "presentation" ? "embed?start=false&loop=false" : m[1] === "forms" ? "viewform?embedded=true" : "preview";
       return { src: `https://docs.google.com/${m[1]}/d/${m[2]}/${fin}`, video: m[1] === "presentation" };
     }
-    if (!/^https?:/.test(url) || /\.pdf($|\?)/i.test(url)) return { src: url };
     if (/\.(mp3|m4a|ogg|wav)($|\?)/i.test(url)) return { audio: url };
+    if (/\.(jpe?g|png|webp|gif)($|\?)/i.test(url)) return { img: url };
     if (/\.(mp4|webm)($|\?)/i.test(url)) return { mp4: url };
+    if (!/^https?:/.test(url) || /\.pdf($|\?)/i.test(url)) return { src: url };
     return null; // enlace externo que probablemente no se deja incrustar
   }
 
@@ -347,7 +397,8 @@
     } else {
       const e = aIncrustado(it.url, it.tipo);
       if (!e) { window.open(it.url, "_blank", "noopener"); return; }
-      if (e.audio) cont.innerHTML = `<div class="lectura"><audio controls style="width:100%" src="${esc(e.audio)}"></audio></div>`;
+      if (e.img) cont.innerHTML = `<div class="marco" style="height:auto;max-height:80vh;overflow:auto;background:#fff"><img src="${esc(e.img)}" alt="${esc(it.titulo)}" style="width:100%;height:auto"></div>`;
+      else if (e.audio) cont.innerHTML = `<div class="lectura"><audio controls style="width:100%" src="${esc(e.audio)}"></audio></div>`;
       else if (e.mp4) cont.innerHTML = `<div class="marco video"><video controls style="width:100%;height:100%" src="${esc(e.mp4)}"></video></div>`;
       else cont.innerHTML = `<div class="marco${e.video ? " video" : ""}"><iframe src="${esc(e.src)}" title="${esc(it.titulo)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`;
     }
@@ -400,10 +451,11 @@
 
   /* --------------------------------------------------------- Biblioteca */
   function biblioteca(raiz, items) {
-    const seccion = raiz.dataset.seccion;
+    const secciones = raiz.dataset.seccion.split(",").map((x) => x.trim());
     const conDestacado = raiz.dataset.destacado !== "no";
-    let lista = items.filter((it) => it.seccion === seccion);
-    const estado = { q: "", tipo: "", tag: "", curso: "" };
+    let lista = items.filter((it) => secciones.includes(it.seccion));
+    const estado = { q: "", tipo: "", tag: "", curso: "", sec: "" };
+    const NOMBRE_SEC = { temas: "Temas", oraciones: "Oraciones", documentos: "Documentos del centro", provincia: "Provincia" };
 
     if (conDestacado) {
       const top = lista.find((it) => it.destacado);
@@ -416,6 +468,7 @@
     const modoLinea = raiz.dataset.vista === "linea";
 
     raiz.innerHTML = `
+      ${secciones.length > 1 ? `<div class="filtros filtro-secciones" role="group" aria-label="Sección"><button class="chip" aria-pressed="true" data-sec="">Todo el material</button>${secciones.map((x) => `<button class="chip" aria-pressed="false" data-sec="${x}">${NOMBRE_SEC[x] || x} <span class="cuenta">${lista.filter((i) => i.seccion === x).length}</span></button>`).join("")}</div>` : ""}
       ${modoLinea && cursos.length > 1 ? `<div class="cursos" role="group" aria-label="Curso"><button class="chip" aria-pressed="true" data-curso="">Todos</button>${cursos.map((c) => `<button class="chip" aria-pressed="false" data-curso="${esc(c)}">Curso ${esc(c)}</button>`).join("")}</div>` : ""}
       <div class="biblioteca-controles">
         <label class="buscador"><span class="sr-only">Buscar</span>${I.buscar}<input type="search" placeholder="Buscar ${esc(raiz.dataset.nombre || "material")}…"></label>
@@ -433,6 +486,7 @@
       const q = estado.q.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
       const r = lista.filter((it) =>
         (!estado.tipo || it.tipo === estado.tipo) &&
+        (!estado.sec || it.seccion === estado.sec) &&
         (!estado.tag || it.etiquetas.includes(estado.tag)) &&
         (!estado.curso || it.curso === estado.curso) &&
         (!q || (it.titulo + " " + it.descripcion + " " + it.etiquetas.join(" ") + " " + it.texto)
@@ -464,6 +518,7 @@
         $$(".chip", grupo).forEach((x) => x.setAttribute("aria-pressed", String(x === c)));
         if ("tipo" in c.dataset) estado.tipo = c.dataset.tipo;
         if ("curso" in c.dataset) estado.curso = c.dataset.curso;
+        if ("sec" in c.dataset) estado.sec = c.dataset.sec;
       }
       pintar();
     });
@@ -482,9 +537,58 @@
 
 
 
+  /* --------------------------------------------- Reproductor del himno */
+  function reproductor(raiz) {
+    const audio = $("audio", raiz), btn = $(".rep-play", raiz), barra = $(".rep-barra", raiz), relleno = $(".rep-relleno", raiz), tiempo = $(".rep-tiempo", raiz);
+    const mmss = (t) => isFinite(t) ? `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}` : "0:00";
+    const pintar = () => {
+      relleno.style.width = (audio.duration ? (audio.currentTime / audio.duration) * 100 : 0) + "%";
+      tiempo.textContent = `${mmss(audio.currentTime)} / ${mmss(audio.duration)}`;
+    };
+    btn.addEventListener("click", () => (audio.paused ? audio.play() : audio.pause()));
+    audio.addEventListener("play", () => raiz.classList.add("sonando"));
+    audio.addEventListener("pause", () => raiz.classList.remove("sonando"));
+    audio.addEventListener("timeupdate", pintar);
+    audio.addEventListener("loadedmetadata", pintar);
+    barra.addEventListener("click", (e) => {
+      const r = barra.getBoundingClientRect();
+      if (audio.duration) audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+    });
+  }
+
   /* -------------------------------- Enlaces a la web de la Provincia */
   function enlacesProvincia(raiz, items) {
-    const lista = items.filter((it) => it.seccion === "provincia-web" && it.url);
+    const porCat = {};
+    items.filter((it) => it.seccion === "provincia-web" && it.url).forEach((it) => {
+      const cat = (it.etiquetas[0] || it.titulo).toLowerCase();
+      const clave = (x) => (x.curso || "") + (x.fecha || "");
+      if (!porCat[cat] || clave(it) > clave(porCat[cat])) porCat[cat] = it;   // el curso más reciente sustituye al anterior
+    });
+    const todos = Object.values(porCat);
+    const esVideo = (it) => /youtu\.?be|vimeo/.test(it.url);
+    const lema = todos.find((it) => esVideo(it) || /lema/i.test(it.etiquetas[0] || ""));
+    const lista = todos.filter((it) => it !== lema);
+    const bloqueLema = $("[data-lema-provincia]");
+    if (bloqueLema && lema) {
+      const id = (lema.url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{6,})/) || [])[1];
+      bloqueLema.innerHTML = `
+        <div class="lema-video revelar">
+          <button class="lema-reproducir" type="button" aria-label="Reproducir el vídeo del lema" ${id ? `style="background-image:url('https://i.ytimg.com/vi/${id}/hqdefault.jpg')"` : ""}>
+            <span class="lema-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span>
+          </button>
+        </div>
+        <div class="lema-texto revelar" style="--d:.1s">
+          <span class="kicker">${esc(lema.etiquetas[0] || "Lema")}${lema.curso ? ` · Curso ${esc(lema.curso)}` : ""}</span>
+          <h2>${esc(lema.titulo)}</h2>
+          ${lema.descripcion ? `<p>${esc(lema.descripcion)}</p>` : ""}
+          <a class="btn btn--linea" href="${esc(lema.url)}" target="_blank" rel="noopener">Ver en YouTube ${I.externo}</a>
+        </div>`;
+      $(".lema-reproducir", bloqueLema).addEventListener("click", (e) => {
+        if (!id) { window.open(lema.url, "_blank", "noopener"); return; }
+        e.currentTarget.outerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="${esc(lema.titulo)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+      });
+      revelar(bloqueLema);
+    } else if (bloqueLema) bloqueLema.closest("section").hidden = true;
     const sec = raiz.closest("section");
     if (!lista.length) { sec.hidden = true; return; }
     const ICONOS = {
@@ -526,6 +630,9 @@
         $('.biblioteca[data-seccion="documentos"]').scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
+    const ancla = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+    const inicial = ancla && $$(".categoria-doc", raiz).find((c) => c.dataset.cat.toLowerCase().startsWith(ancla));
+    if (inicial) setTimeout(() => inicial.click(), 400);
   }
 
   /* ------------------------------------------------------------- Avisos */
@@ -558,7 +665,7 @@
           <h3>${esc(it.titulo)}</h3>
           ${cuerpo}
           <div class="aviso-pie">
-            ${it.url ? `<a class="btn btn--sm" href="${esc(it.url)}" target="_blank" rel="noopener">Más información ${I.flechaDiag}</a>` : ""}
+            ${it.url ? `<a class="btn btn--sm" href="${esc(it.url)}" target="_blank" rel="noopener">${/\.(jpe?g|png|webp|gif)($|\?)/i.test(it.url) ? "Ver cartel" : "Más información"} ${I.flechaDiag}</a>` : ""}
             ${caduca && !isNaN(caduca) ? `<span class="aviso-caduca">${it.caduca < HOY ? "Finalizó" : "Hasta"} el ${caduca.getDate()} de ${caduca.toLocaleDateString("es-ES", { month: "long" })}</span>` : ""}
           </div>
         </div>
@@ -591,7 +698,7 @@
     const visto = lsGet("sscc-avisos-visto") || "";
     const nuevos = avisos(items).activos.filter((a) => (a.fecha || "") > visto).length;
     if (!nuevos) return;
-    $$('.menu a[href="avisos.html"]').forEach((a) => {
+    $$('.menu > li > a[href="avisos.html"]').forEach((a) => {
       a.insertAdjacentHTML("beforeend", `<span class="punto" aria-label="${nuevos} avisos nuevos">${nuevos}</span>`);
     });
   }
@@ -643,11 +750,33 @@
     return "https://calendar.google.com/calendar/render?" + q.toString();
   }
 
+  /* Tipos de encuentro: un símbolo para cada uno en el calendario */
+  const TIPOS_EVENTO = [
+    { k: "misa", re: /misa|eucarist/i, nombre: "Eucaristía", color: "#c98a12",
+      svg: '<path d="M7 3h10l-1 6a4 4 0 0 1-8 0z"/><path d="M12 13v6M8 21h8"/>' },
+    { k: "adoracion", re: /adoraci/i, nombre: "Adoración", color: "#b7791f",
+      svg: '<circle cx="12" cy="9" r="3"/><path d="M12 2v2M12 14v2M5 9h2M17 9h2M7.1 4.1l1.4 1.4M15.5 12.5l1.4 1.4M16.9 4.1l-1.4 1.4M8.5 12.5l-1.4 1.4M12 16v5M9 21h6"/>' },
+    { k: "retiro", re: /retiro/i, nombre: "Retiro", color: "#2f9e6b",
+      svg: '<path d="m3 20 6-10 4 6 3-4 5 8z"/><circle cx="17" cy="6" r="2"/>' },
+    { k: "navidad", re: /navidad|noche ?buena|reyes/i, nombre: "Navidad", color: "#d0533f",
+      svg: '<path d="m12 3 2.2 4.6 5 .7-3.6 3.5.9 5L12 14.4 7.5 16.8l.9-5L4.8 8.3l5-.7z"/>' },
+    { k: "convivencia", re: /convivencia|encuentro de centro|fiesta|merienda/i, nombre: "Convivencia", color: "#e8590c",
+      svg: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>' },
+    { k: "aspirantes", re: /aspirante/i, nombre: "Aspirantes", color: "#0da2dc",
+      svg: '<path d="M12 21v-9"/><path d="M12 12c0-4 3-7 7-7 0 4-3 7-7 7z"/><path d="M12 14c0-3-2.5-5.5-6-5.5 0 3 2.5 5.5 6 5.5z"/>' },
+    { k: "grupo", re: /grupo|formaci/i, nombre: "Grupo de referencia", color: "#006a92",
+      svg: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.3a4.5 4.5 0 0 1 5.5 4.7"/>' }
+  ];
+  const OTRO_EVENTO = { k: "otro", nombre: "Otro encuentro", color: "#34546d", svg: '<circle cx="12" cy="12" r="4"/>' };
+  const tipoEvento = (e) => TIPOS_EVENTO.find((t) => t.re.test(e.titulo + " " + (e.descripcion || ""))) || OTRO_EVENTO;
+  const simbolo = (t, extra = "") => `<span class="simb ${extra}" style="--c:${t.color}" title="${esc(t.nombre)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${t.svg}</svg></span>`;
+
   function eventoHTML(e, i = 0) {
     const d = new Date(e.fecha + "T12:00:00");
-    return `<div class="evento revelar" style="--d:${Math.min(i, 6) * 0.06}s">
+    const t = tipoEvento(e);
+    return `<div class="evento revelar" style="--d:${Math.min(i, 6) * 0.06}s; --c:${t.color}">
       <div class="dia"><b>${d.getDate()}</b><small>${MESES[d.getMonth()]}</small></div>
-      <div><h3>${esc(e.titulo)}</h3><p>${esc([e.lugar, e.descripcion].filter(Boolean).join(" · "))}</p>
+      <div><span class="evento-tipo">${simbolo(t, "mini")} ${esc(t.nombre)}</span><h3>${esc(e.titulo)}</h3><p>${esc([e.lugar, e.descripcion].filter(Boolean).join(" · "))}</p>
         <a class="anadir-cal" href="${enlaceGoogleCal(e)}" target="_blank" rel="noopener">+ Añadir a mi calendario</a></div>
       <span class="hora">${esc(e.hora || "")}</span></div>`;
   }
@@ -682,6 +811,7 @@
         </div>
         <div class="cal-semana">${["L", "M", "X", "J", "V", "S", "D"].map((d) => `<span>${d}</span>`).join("")}</div>
         <div class="cal-dias"></div>
+        <div class="cal-leyenda">${[...new Map(lista.map((e) => [tipoEvento(e).k, tipoEvento(e)])).values()].map((t) => `<span>${simbolo(t, "mini")} ${esc(t.nombre)}</span>`).join("")}</div>
       </div>
       <div class="cal-lado"><h4 class="cal-lado-titulo"></h4><div class="agenda cal-lista"></div></div>`;
 
@@ -715,9 +845,8 @@
         const f = iso(anio, mes, d), ev = porDia[f] || [];
         html += `<button class="cal-dia${f === HOY ? " hoy" : ""}${ev.length ? " con-evento" : ""}${f === sel ? " sel" : ""}" data-f="${f}" aria-label="${d} de ${NOMBRES[mes]}${ev.length ? ", " + ev.length + " encuentro(s)" : ""}">
           <span class="num-dia">${d}</span>
-          ${ev.slice(0, 2).map((e) => `<span class="cal-ev">${esc(e.titulo)}</span>`).join("")}
-          ${ev.length > 2 ? `<span class="cal-mas">+${ev.length - 2}</span>` : ""}
-          ${ev.length ? '<i class="cal-punto"></i>' : ""}
+          ${ev.length ? `<span class="cal-simbolos">${[...new Map(ev.map((e) => [tipoEvento(e).k, tipoEvento(e)])).values()].slice(0, 3).map((t) => simbolo(t)).join("")}</span>` : ""}
+          ${ev.length ? `<span class="cal-ev">${esc(ev[0].titulo)}${ev.length > 1 ? ` <em>+${ev.length - 1}</em>` : ""}</span>` : ""}
         </button>`;
       }
       dias.innerHTML = html;
@@ -740,6 +869,27 @@
   }
 
 
+  /* --------------------------------------- Próximos encuentros (lista) */
+  function proximos(raiz, items) {
+    const N = Number(raiz.dataset.cantidad || 12);
+    const ev = eventos(items).filter((e) => e.fecha >= HOY);
+    if (!ev.length) { raiz.innerHTML = `<div class="vacio"><div class="hexvacio"></div><p>No hay encuentros programados.</p></div>`; return; }
+    const NOMBRES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    let mostrados = N;
+    function pintar() {
+      const grupos = {};
+      ev.slice(0, mostrados).forEach((e) => (grupos[e.fecha.slice(0, 7)] = grupos[e.fecha.slice(0, 7)] || []).push(e));
+      raiz.innerHTML = Object.entries(grupos).map(([m, l]) => {
+        const [a, mm] = m.split("-");
+        return `<div class="prox-mes"><h3 class="prox-titulo">${NOMBRES[Number(mm) - 1]} <span>${a}</span></h3><div class="agenda">${l.map(eventoHTML).join("")}</div></div>`;
+      }).join("") + (mostrados < ev.length ? `<div class="prox-mas"><button class="btn btn--linea" type="button">Ver más encuentros (${ev.length - mostrados})</button></div>` : "");
+      const b = $(".prox-mas button", raiz);
+      if (b) b.addEventListener("click", () => { mostrados += N; pintar(); });
+      revelar(raiz);
+    }
+    pintar();
+  }
+
   /* ---------------------------------------------- Formulario de envío */
   function formularioEnvio(form) {
     const params = new URLSearchParams(location.search);
@@ -760,7 +910,34 @@
     }
 
     const enviar = $("[type=submit]", form);
-    if (!CFG.email) {
+    if (CFG.apiGoogle) {
+      form.removeAttribute("action");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const fd = new FormData(form);
+        const archivo = $("input[type=file]", form).files[0];
+        enviar.disabled = true;
+        enviar.firstChild.textContent = archivo ? "Subiendo archivo… " : "Enviando… ";
+        try {
+          await llamarAPI({
+            accion: "proponer",
+            _honey: fd.get("_honey") || "",
+            propuesta: {
+              nombre: fd.get("nombre"), correo: fd.get("correo"), tipo_material: fd.get("tipo_material"),
+              titulo: fd.get("titulo"), texto: fd.get("texto"), fecha: fd.get("fecha"), enlace: fd.get("enlace")
+            },
+            archivo: archivo ? await archivoABase64(archivo) : null
+          });
+          history.replaceState(null, "", "enviar.html?enviado=1");
+          formularioEnvio(form);
+        } catch (err) {
+          enviar.disabled = false;
+          enviar.firstChild.textContent = "Enviar material ";
+          alert("No se ha podido enviar: " + err.message + "\nInténtalo de nuevo o escribe a " + (CFG.email || "el centro") + ".");
+        }
+      });
+    } else if (!CFG.email) {
       form.insertAdjacentHTML("afterbegin", '<p class="aviso-config"><b>Formulario pendiente de activar:</b> escribe el correo del centro en <code>assets/js/config.js</code> → <code>email</code>.</p>');
       enviar.disabled = true;
     } else {
@@ -774,13 +951,13 @@
 
     // Zona para soltar archivos
     const zona = $(".soltar", form), input = $("input[type=file]", zona), nombre = $(".archivo-nombre", zona);
-    const MAX = 5 * 1024 * 1024;
+    const MAX = (CFG.apiGoogle ? 15 : 5) * 1024 * 1024;
     const mostrar = () => {
       const f = input.files[0];
       if (!f) { nombre.textContent = ""; return; }
       if (f.size > MAX) {
         input.value = "";
-        nombre.textContent = "El archivo supera 5 MB: súbelo a Drive y pega el enlace arriba.";
+        nombre.textContent = `El archivo supera ${MAX / 1024 / 1024} MB: súbelo a Drive y pega el enlace arriba.`;
         return;
       }
       nombre.textContent = `${f.name} · ${(f.size / 1024 / 1024).toFixed(1)} MB`;
@@ -937,6 +1114,8 @@
     revelar();
     $$("[data-citas]").forEach(citas);
     $$("form[data-envio]").forEach(formularioEnvio);
+    $$("[data-reproductor]").forEach(reproductor);
+    if (PAGINA === "panel") return; // el panel carga sus propios datos
 
     const items = await cargarContenido();
     $$(".biblioteca[data-seccion]").forEach((r) => biblioteca(r, items));
@@ -947,10 +1126,14 @@
     $$("[data-avisos-inicio]").forEach((r) => avisosInicio(r, items));
     $$("[data-agenda]").forEach((r) => agenda(r, items));
     $$("[data-calendario]").forEach((r) => calendario(r, items));
+    $$("[data-proximos]").forEach((r) => proximos(r, items));
     puntoAvisos(items);
     toastAviso(items);
     revelar();
   }
+
+  // Herramientas compartidas con el panel de gestión
+  window.SSCC = { CFG, I, TIPOS, MESES, esc, $, $$, normalizar, tarjeta, avisoHTML, eventoHTML, tipoEvento, abrir, llamarAPI, archivoABase64, revelar, cargarContenido };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
   else iniciar();

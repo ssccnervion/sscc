@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Panel de gestión · SSCC Nervión</title>
+  <meta name="description" content="Envía un tema, una oración u otro material al Centro de Salesianos Cooperadores de Nervión.">
+  <meta name="theme-color" content="#006a92">
+  <meta name="robots" content="noindex, nofollow">
+  <!-- Iconos y app (PWA) -->
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SSCC Nervión">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- Vista previa al compartir (WhatsApp, Telegram, redes) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Salesianos Cooperadores · Centro Nervión">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Enviar material · Salesianos Cooperadores Nervión">
+  <meta property="og:description" content="Envía un tema, una oración u otro material al Centro de Salesianos Cooperadores de Nervión.">
+  <meta property="og:url" content="https://sscc-nervion.vercel.app/enviar.html">
+  <meta property="og:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Salesianos Cooperadores · Centro Nervión · Sevilla">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <link rel="preload" href="assets/fonts/Gilroy-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-pagina="panel">
+
+<main>
+
+
+  <section class="page-hero page-hero--corto">
+    <canvas aria-hidden="true"></canvas>
+    <span class="petalo petalo--a"></span>
+    <div class="contenedor">
+      <span class="kicker">Solo para el equipo de la web</span>
+      <h1>Panel de <span class="resalte">gestión</span></h1>
+    </div>
+    <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
+  </section>
+
+  <section class="seccion panel-seccion">
+    <div class="contenedor" id="panel"></div>
+  </section>
+</main>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/contenido.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/panel.js"></script>
+</body>
+</html>

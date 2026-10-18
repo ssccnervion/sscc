@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Avisos y calendario · Salesianos Cooperadores Nervión</title>
+  <title>Avisos · Salesianos Cooperadores Nervión</title>
   <meta name="description" content="Avisos y calendario del Centro de Salesianos Cooperadores de Nervión.">
   <meta name="theme-color" content="#006a92">
   <!-- Iconos y app (PWA) -->
@@ -42,9 +42,9 @@
     <span class="numero" aria-hidden="true"><b>/</b>05</span>
     <div class="contenedor">
       <span class="kicker">Tablón del centro</span>
-      <h1>Avisos y <span class="resalte">calendario</span></h1>
-      <p>Todo lo que tienes que saber esta semana y las fechas del curso, siempre al día.</p>
-      <div class="acciones"><a class="btn btn--oro" href="#calendario">Ver calendario <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <h1>Tablón de <span class="resalte">avisos</span></h1>
+      <p>Todo lo que tienes que saber esta semana, siempre al día.</p>
+      <div class="acciones"><a class="btn btn--oro" href="calendario.html">Ver calendario <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
     </div>
     <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
   </section>
@@ -61,11 +61,11 @@
 
   <section class="seccion seccion--blanca" id="calendario">
     <div class="contenedor">
-      <div class="cabeza revelar">
-        <div><span class="kicker">Calendario</span><h2>Fechas del curso</h2></div>
-        <p>Pulsa un día para ver sus encuentros y añádelos a tu propio calendario con un clic.</p>
-      </div>
-      <div class="calendario revelar" data-calendario></div>
+      <a class="enlace-calendario revelar" href="calendario.html">
+        <span class="ec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+        <span><b>Calendario del curso</b><small>Todas las fechas, con un símbolo para cada tipo de encuentro</small></span>
+        <span class="btn btn--oro">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
     </div>
   </section>
 

@@ -36,6 +36,23 @@ window.SSCC_CONTENIDO = [
   /* ---------------------- WEB DE LA PROVINCIA ---------------------- */
   {
     seccion: "provincia-web",
+    titulo: "«Impulsados a actuar»",
+    descripcion: "El lema de los Salesianos Cooperadores de la Provincia María Auxiliadora para el curso 2026-2027.",
+    url: "https://youtu.be/_PS2MoAvcPI",
+    curso: "2026-27",
+    etiquetas: ["Lema"]
+  },
+  {
+    seccion: "provincia-web",
+    titulo: "Plan trienal 2024-2027",
+    descripcion: "Las prioridades de la Provincia para estos tres cursos, que orientan el proyecto de cada año.",
+    url: "https://cooperadores-pma.org/Documentos/Planes-Trienales/Plan-Trienal-2024-2027/",
+    archivo: "https://cooperadores-pma.org/Documentos/Planes-Trienales/",
+    curso: "2024-27",
+    etiquetas: ["Plan trienal"]
+  },
+  {
+    seccion: "provincia-web",
     titulo: "Proyecto anual 2026-2027",
     descripcion: "El proyecto de la Provincia María Auxiliadora para este curso: objetivos y líneas de acción para todos los centros.",
     url: "https://cooperadores-pma.org/Documentos/Proyectos-Anuales/Proyecto-2026-2027/",
@@ -129,7 +146,7 @@ window.SSCC_CONTENIDO = [
     titulo: "Encuentro de centro · 8 de noviembre",
     fecha: "2026-10-18",
     caduca: "2026-11-08",
-    texto: "18:00 · Merienda compartida (el centro pone el café). Compartiremos nuestra misión y nuestra vocación: elige una o varias de las misiones que llevas a cabo y trae un símbolo que represente lo que haces o lo que significa para ti. Responderemos juntos a la pregunta «¿Dónde desarrollo mi misión como salesiano cooperador?».\n\nLos aspirantes están invitados: pueden compartir su misión o hacer las preguntas que deseen a los SSCC con promesa.\n\n19:30 · Eucaristía con Hogares Don Bosco.",
+    texto: "¡Tenemos encuentro de centro! Todos los detalles, en el cartel.",
     url: "material/calendario/encuentro-de-centro-8nov26.jpg"
   },
   {
@@ -227,18 +244,36 @@ window.SSCC_CONTENIDO = [
     etiquetas: ["Música"]
   },
 
-  /* -------------------------- PROVINCIA -------------------------- */
+  /* ----------------------------- HIMNO ----------------------------- */
   {
-    seccion: "provincia",
-    titulo: "Carta de inicio de curso del Consejo Provincial (ejemplo)",
-    descripcion: "Comunicado enviado por el Consejo Provincial. Sustituye por el PDF recibido.",
-    tipo: "pdf",
-    url: "",
-    fecha: "2026-09-15",
-    curso: "2026-27",
-    etiquetas: ["Comunicado"],
-    destacado: true
+    seccion: "oraciones",
+    titulo: "Himno «Soñadores de vida» · canción",
+    descripcion: "Himno de los Salesianos Cooperadores de la Provincia María Auxiliadora. Letra y música: Javi Bernal.",
+    tipo: "audio",
+    url: "material/himno/himno-sscc-pma-sonadores-de-vida.mp3",
+    fecha: "2026-10-18",
+    etiquetas: ["Himno", "Música"]
   },
+  {
+    seccion: "oraciones",
+    titulo: "Himno «Soñadores de vida» · letra",
+    descripcion: "La letra del himno con el formato corporativo, lista para imprimir.",
+    tipo: "pdf",
+    url: "material/himno/himno-sscc-pma-letra.pdf",
+    fecha: "2026-10-18",
+    etiquetas: ["Himno"]
+  },
+  {
+    seccion: "oraciones",
+    titulo: "Himno «Soñadores de vida» · acordes",
+    descripcion: "Letra con los acordes para guitarra.",
+    tipo: "pdf",
+    url: "material/himno/himno-sscc-pma-acordes.pdf",
+    fecha: "2026-10-18",
+    etiquetas: ["Himno", "Música"]
+  },
+
+  /* -------------------------- PROVINCIA -------------------------- */
   {
     seccion: "provincia",
     titulo: "Calendario provincial 2026-27 (ejemplo)",

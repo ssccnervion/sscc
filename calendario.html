@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Calendario · Salesianos Cooperadores Nervión</title>
+  <meta name="description" content="Calendario y próximos encuentros del Centro de Salesianos Cooperadores de Nervión.">
+  <meta name="theme-color" content="#006a92">
+  <!-- Iconos y app (PWA) -->
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SSCC Nervión">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- Vista previa al compartir (WhatsApp, Telegram, redes) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Salesianos Cooperadores · Centro Nervión">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Calendario · Salesianos Cooperadores Nervión">
+  <meta property="og:description" content="Calendario y próximos encuentros del Centro de Salesianos Cooperadores de Nervión.">
+  <meta property="og:url" content="https://sscc-nervion.vercel.app/calendario.html">
+  <meta property="og:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Salesianos Cooperadores · Centro Nervión · Sevilla">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <link rel="preload" href="assets/fonts/Gilroy-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-pagina="calendario">
+
+<main>
+
+
+  <section class="page-hero">
+    <canvas aria-hidden="true"></canvas>
+    <span class="petalo petalo--a"></span><span class="petalo petalo--b"></span>
+    <span class="numero" aria-hidden="true"><b>/</b>05</span>
+    <div class="contenedor">
+      <span class="kicker">Curso 2026-2027</span>
+      <h1>Calendario <span class="resalte">del centro</span></h1>
+      <p>Todas las fechas del curso de un vistazo. Cada símbolo te dice qué hay ese día: grupo, aspirantes, Eucaristía, retiro, convivencia…</p>
+      <div class="acciones">
+        <a class="btn btn--oro" href="#mes">Ver el mes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn--claro" href="#proximos">Próximos encuentros</a>
+      </div>
+    </div>
+    <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
+  </section>
+
+  <section class="seccion" id="mes">
+    <div class="contenedor">
+      <div class="cabeza revelar">
+        <div><span class="kicker">Calendario</span><h2>El mes de un vistazo</h2></div>
+        <p>Pulsa un día para ver sus encuentros y añádelos a tu propio calendario con un clic.</p>
+      </div>
+      <div class="calendario revelar" data-calendario></div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--blanca" id="proximos">
+    <div class="contenedor">
+      <div class="cabeza revelar">
+        <div><span class="kicker">Lo que viene</span><h2>Próximos encuentros</h2></div>
+        <p>Ordenados por mes, con su hora y el botón para guardarlos en tu móvil.</p>
+      </div>
+      <div class="proximos" data-proximos data-cantidad="12"></div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:clamp(50px,7vw,90px)">
+    <div class="contenedor">
+      <div class="banda-enviar revelar">
+        <span class="petalo petalo--a"></span>
+        <div><h2>¿Falta alguna fecha?</h2><p>Propón un encuentro o un cambio y lo añadiremos al calendario.</p></div>
+        <a class="btn btn--oro" href="enviar.html?tipo=Aviso">Proponer una fecha <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/contenido.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

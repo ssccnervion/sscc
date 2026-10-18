@@ -25,7 +25,12 @@ window.SSCC_CONFIG = {
   instagram: "",
   youtube: "",
 
-  /* Hoja de cálculo de Google publicada como CSV.
+  /* CONEXIÓN CON GOOGLE (recomendado). URL de la aplicación web de Apps Script
+     (google/Codigo.gs). Con ella funcionan el panel de gestión (panel.html) y
+     el formulario «Enviar material», y el material se guarda en el Drive del centro. */
+  apiGoogle: "",
+
+  /* (Alternativa antigua) Hoja de cálculo de Google publicada como CSV.
      Si se rellena, la web carga TODO el material desde la hoja
      (y deja de usar assets/js/contenido.js).
      Archivo > Compartir > Publicar en la web > Hoja 1 > CSV  → pega aquí el enlace. */

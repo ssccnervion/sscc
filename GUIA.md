@@ -14,6 +14,8 @@ sscc-nervion-web/
 ├── avisos.html           Avisos y calendario
 ├── enviar.html           Formulario «Enviar material»
 ├── documentos.html       Documentos del centro (proyecto, actas, memoria)
+├── panel.html            Panel de gestión (publicar sin tocar código)
+├── google/Codigo.gs      «Servidor» en Google: Hoja, Drive y correo
 ├── offline.html          Página que se ve sin conexión
 ├── manifest.webmanifest  Datos de la app (nombre, iconos, colores)
 ├── sw.js                 Funcionamiento sin conexión de la app
@@ -34,6 +36,26 @@ sscc-nervion-web/
 Abre una terminal en esta carpeta y ejecuta `python3 -m http.server 8000`. Después visita http://localhost:8000.
 
 ---
+
+## Forma recomendada de actualizar: el panel de gestión
+
+Quien gestione la web entra en **`/panel.html`** (enlace «Gestión» al pie de la web) con la clave del centro y publica en 3 pasos: elige qué es → título y archivo → **Publicar**. El archivo se guarda en el Drive de `sscc.nervion@gmail.com` y aparece en la web sin tocar código ni volver a subirla. Lo enviado desde «Enviar material» llega al correo y a la pestaña **Propuestas** del panel.
+
+### Instalación del panel (una vez, ~10 minutos)
+1. Entra en https://script.google.com con la cuenta `sscc.nervion@gmail.com` → **Nuevo proyecto**. Ponle de nombre «Web SSCC Nervión».
+2. Borra lo que aparece y pega todo el contenido de `google/Codigo.gs`.
+3. En la línea `const CLAVE = "cambia-esta-clave";` escribe la clave del panel (la que usará el equipo). Guarda (icono del disco).
+4. Arriba, elige la función **instalar** y pulsa **Ejecutar**. Acepta los permisos (Google avisará de que la app no está verificada: *Configuración avanzada → Ir a Web SSCC Nervión*). Se crean la Hoja «Web SSCC Nervión · Contenido» y la carpeta de Drive «Web SSCC Nervión».
+5. **Implementar → Nueva implementación** → tipo **Aplicación web** → *Ejecutar como: yo* · *Quién tiene acceso: cualquier usuario* → **Implementar**. Copia la URL que termina en `/exec`.
+6. Pega esa URL en `assets/js/config.js` → `apiGoogle` y vuelve a subir la web una última vez.
+
+Si más adelante cambias el código del servidor: *Implementar → Gestionar implementaciones → editar → Nueva versión* (la URL no cambia).
+
+Con el panel instalado, `contenido.js` se queda para el material de base (sigue apareciendo) y lo nuevo se publica desde el panel. Lo publicado se puede corregir también directamente en la Hoja (pestaña *Material*); para cargar muchas fechas de golpe, pega las filas ahí.
+
+---
+
+## Otras formas (alternativas)
 
 ## Conectarlo todo con Google (paso a paso)
 
