@@ -18,10 +18,10 @@ Es una web estática (HTML, CSS y JavaScript), sin instalaciones ni base de dato
      git push -u origin main
      ```
 3. En el repositorio: *Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save*.
-4. En uno o dos minutos la web estará en `https://TU_USUARIO.github.io/sscc-nervion-web/`.
-5. Para que se vea la imagen al compartir por WhatsApp, sustituye en todos los `.html` el texto `https://TU_USUARIO.github.io/sscc-nervion-web/` por la dirección real.
+4. En uno o dos minutos la web estará en `https://sscc-nervion.vercel.app/`.
+5. La web pública está en **https://sscc-nervion.vercel.app/** (Vercel). Las etiquetas para compartir por WhatsApp ya apuntan ahí; si cambia la dirección, sustitúyela en todos los `.html`.
 
-La web es una **PWA**: GitHub Pages sirve con HTTPS, así que desde el móvil se puede instalar como app.
+La web es una **PWA**: Vercel y GitHub Pages sirven con HTTPS, así que desde el móvil se puede instalar como app.
 
 ## Actualizar el contenido
 

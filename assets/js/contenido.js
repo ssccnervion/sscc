@@ -5,7 +5,7 @@
    archivo se ignora y el material se lee desde la hoja.)
 
    Campos:
-     seccion     → "temas" | "oraciones" | "provincia"
+     seccion     → "temas" | "oraciones" | "provincia" | "documentos" | "avisos" | "calendario"
      titulo      → texto corto
      descripcion → una o dos frases
      tipo        → "pdf" | "video" | "audio" | "presentacion" | "documento"
@@ -18,6 +18,14 @@
      texto       → (solo tipo "texto" y avisos) el contenido completo; separa párrafos con \n\n
      caduca      → (solo avisos) "AAAA-MM-DD": a partir del día siguiente pasa a «Avisos anteriores»
 
+   WEB DE LA PROVINCIA: usa seccion "provincia-web" para enlazar lo que publica
+   cooperadores-pma.org. En etiquetas va la categoría ("Proyecto anual",
+   "Formación"...), en url la página del curso y en archivo la página con los
+   cursos anteriores. Cada curso nuevo basta con cambiar titulo, curso y url.
+
+   DOCUMENTOS DEL CENTRO: usa seccion "documentos" y en etiquetas la categoría:
+   "Proyecto de centro", "Actas" o "Memoria".
+
    CALENDARIO: usa seccion "calendario" con fecha, hora ("18:00"), lugar y
    descripcion. Aparecen en el calendario y en «Próximos encuentros».
 
@@ -25,6 +33,39 @@
    aparece primero y se muestra una notificación al entrar en la web.
    ========================================================================= */
 window.SSCC_CONTENIDO = [
+  /* ---------------------- WEB DE LA PROVINCIA ---------------------- */
+  {
+    seccion: "provincia-web",
+    titulo: "Proyecto anual 2026-2027",
+    descripcion: "El proyecto de la Provincia María Auxiliadora para este curso: objetivos y líneas de acción para todos los centros.",
+    url: "https://cooperadores-pma.org/Documentos/Proyectos-Anuales/Proyecto-2026-2027/",
+    archivo: "https://cooperadores-pma.org/Documentos/Proyectos-Anuales/",
+    curso: "2026-27",
+    etiquetas: ["Proyecto anual"]
+  },
+  {
+    seccion: "provincia-web",
+    titulo: "Plan de formación 2026-2027",
+    descripcion: "Los temas y materiales de formación que propone el Consejo Provincial para este curso.",
+    url: "https://cooperadores-pma.org/Consejo-Provincial/Formacion/Plan-de-formacion-2026-2027/",
+    archivo: "https://cooperadores-pma.org/Consejo-Provincial/Formacion/",
+    curso: "2026-27",
+    etiquetas: ["Formación"]
+  },
+
+  /* --------------------- DOCUMENTOS DEL CENTRO --------------------- */
+  {
+    seccion: "documentos",
+    titulo: "Acta del encuentro de centro · 19 de septiembre",
+    descripcion: "Evaluación del curso anterior, grupos de formación y acompañamiento, acuerdos y prioridades del curso 2026-27.",
+    tipo: "pdf",
+    url: "material/documentos-centro/actas/2026-09-19-acta-encuentro-de-centro.pdf",
+    fecha: "2026-09-19",
+    curso: "2026-27",
+    etiquetas: ["Actas"],
+    destacado: true
+  },
+
   /* -------------------------- CALENDARIO -------------------------- */
   // Primer trimestre del curso 2026-27 (calendario «Impulsados a actuar»)
   { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-10-05", hora: "18:00", curso: "2026-27" },
@@ -40,7 +81,7 @@ window.SSCC_CONTENIDO = [
   { seccion: "calendario", titulo: "Aspirantes (Esther)", fecha: "2026-10-25", hora: "18:00", curso: "2026-27" },
   { seccion: "calendario", titulo: "Misa María Auxiliadora", fecha: "2026-10-25", hora: "19:30", curso: "2026-27" },
   { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-11-06", hora: "17:00", curso: "2026-27" },
-  { seccion: "calendario", titulo: "Convivencia Centro SSCC", fecha: "2026-11-08", hora: "18:00", curso: "2026-27" },
+  { seccion: "calendario", titulo: "Encuentro de centro: convivencia SSCC", fecha: "2026-11-08", hora: "18:00", curso: "2026-27", descripcion: "Merienda compartida y «¿Dónde desarrollo mi misión como salesiano cooperador?»" },
   { seccion: "calendario", titulo: "Eucaristía con Hogares Don Bosco", fecha: "2026-11-08", hora: "19:30", curso: "2026-27" },
   { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-16", hora: "18:00", curso: "2026-27" },
   { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-11-16", hora: "19:00", curso: "2026-27" },
@@ -82,6 +123,14 @@ window.SSCC_CONTENIDO = [
     caduca: "2026-10-25",
     destacado: true,
     texto: "Este mes la Misa de María Auxiliadora no será el sábado 24: la celebramos el domingo 25 de octubre a las 19:30."
+  },
+  {
+    seccion: "avisos",
+    titulo: "Encuentro de centro · 8 de noviembre",
+    fecha: "2026-10-18",
+    caduca: "2026-11-08",
+    texto: "18:00 · Merienda compartida (el centro pone el café). Compartiremos nuestra misión y nuestra vocación: elige una o varias de las misiones que llevas a cabo y trae un símbolo que represente lo que haces o lo que significa para ti. Responderemos juntos a la pregunta «¿Dónde desarrollo mi misión como salesiano cooperador?».\n\nLos aspirantes están invitados: pueden compartir su misión o hacer las preguntas que deseen a los SSCC con promesa.\n\n19:30 · Eucaristía con Hogares Don Bosco.",
+    url: "material/calendario/encuentro-de-centro-8nov26.jpg"
   },
   {
     seccion: "avisos",

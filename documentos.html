@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Documentos del centro · Salesianos Cooperadores Nervión</title>
+  <meta name="description" content="Proyecto de centro, actas y memorias del Centro de Salesianos Cooperadores de Nervión.">
+  <meta name="theme-color" content="#006a92">
+  <!-- Iconos y app (PWA) -->
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SSCC Nervión">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- Vista previa al compartir (WhatsApp, Telegram, redes) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Salesianos Cooperadores · Centro Nervión">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Documentos del centro · Salesianos Cooperadores Nervión">
+  <meta property="og:description" content="Proyecto de centro, actas y memorias del Centro de Salesianos Cooperadores de Nervión.">
+  <meta property="og:url" content="https://sscc-nervion.vercel.app/documentos.html">
+  <meta property="og:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Salesianos Cooperadores · Centro Nervión · Sevilla">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <link rel="preload" href="assets/fonts/Gilroy-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-pagina="documentos">
+
+<main>
+  <section class="page-hero">
+    <canvas aria-hidden="true"></canvas>
+    <span class="petalo petalo--a"></span><span class="petalo petalo--b"></span>
+    <span class="numero" aria-hidden="true"><b>/</b>07</span>
+    <div class="contenedor">
+      <span class="kicker">Centro Nervión</span>
+      <h1>Documentos <span class="resalte">del centro</span></h1>
+      <p>El proyecto de centro, las actas de los encuentros y las memorias de cada curso, siempre a mano y con el formato corporativo.</p>
+    </div>
+    <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
+  </section>
+
+  <section class="seccion" style="padding-bottom:0">
+    <div class="contenedor">
+      <div class="categorias-doc" data-categorias-docs>
+        <button class="categoria-doc revelar" style="--d:0.0s" data-cat="Proyecto de centro" aria-pressed="false" type="button">
+          <span class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></span>
+          <h3>Proyecto de centro</h3><p>Nuestro proyecto: objetivos, líneas de acción y organización del centro.</p><span class="cat-cuenta"></span>
+        </button>
+        <button class="categoria-doc revelar" style="--d:0.08s" data-cat="Actas" aria-pressed="false" type="button">
+          <span class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span>
+          <h3>Actas</h3><p>Lo hablado y acordado en los encuentros y consejos del centro.</p><span class="cat-cuenta"></span>
+        </button>
+        <button class="categoria-doc revelar" style="--d:0.16s" data-cat="Memoria" aria-pressed="false" type="button">
+          <span class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 15v-4M12 15V8M16 15v-6"/></svg></span>
+          <h3>Memoria</h3><p>Resumen de cada curso: lo vivido, la evaluación y las fotos.</p><span class="cat-cuenta"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="cabeza revelar">
+        <div><span class="kicker">Archivo</span><h2>Todos los documentos</h2></div>
+        <a class="btn btn--linea" data-carpeta="documentos" hidden target="_blank" rel="noopener">Abrir carpeta en Drive <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </div>
+      <div class="biblioteca" data-seccion="documentos" data-nombre="documentos" data-etiqueta-destacado="Último documento"></div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/contenido.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

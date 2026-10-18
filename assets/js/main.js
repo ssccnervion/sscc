@@ -39,6 +39,7 @@
     { id: "oraciones", texto: "Oraciones", href: "oraciones.html" },
     { id: "quienes-somos", texto: "Quiénes somos", href: "quienes-somos.html" },
     { id: "provincia", texto: "Provincia", href: "provincia.html" },
+    { id: "documentos", texto: "Documentos", href: "documentos.html" },
     { id: "avisos", texto: "Avisos", href: "avisos.html" },
     { id: "enviar", texto: "Enviar material", href: "enviar.html", cta: true }
   ];
@@ -275,6 +276,7 @@
       texto: it.texto || "",
       caduca: it.caduca || "",
       hora: it.hora || "",
+      archivo: (it.archivo || "").trim(),
       lugar: it.lugar || ""
     };
   }
@@ -471,12 +473,60 @@
   /* ---------------------------------------------- Últimos (portada) */
   function ultimos(raiz, items) {
     const n = Number(raiz.dataset.cantidad || 6);
-    const material = items.filter((it) => it.seccion !== "avisos");
+    const material = items.filter((it) => !["avisos", "calendario", "provincia-web"].includes(it.seccion));
     const lista = material.filter((it) => it.url || it.texto).slice(0, n);
     raiz.innerHTML = "";
     (lista.length ? lista : material.slice(0, n)).forEach((it, i) => raiz.append(tarjeta(it, i)));
   }
 
+
+
+
+  /* -------------------------------- Enlaces a la web de la Provincia */
+  function enlacesProvincia(raiz, items) {
+    const lista = items.filter((it) => it.seccion === "provincia-web" && it.url);
+    const sec = raiz.closest("section");
+    if (!lista.length) { sec.hidden = true; return; }
+    const ICONOS = {
+      "proyecto anual": '<path d="M9 4h6M9 4a1 1 0 0 0-1 1v1h8V5a1 1 0 0 0-1-1M8 6H6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2"/><path d="m9 13 2 2 4-4"/>',
+      "formación": '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>'
+    };
+    const ico = (cat) => ICONOS[(cat || "").toLowerCase()] || '<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>';
+    raiz.innerHTML = lista.map((it, i) => {
+      const cat = it.etiquetas[0] || "Provincia";
+      return `
+      <article class="enlace-prov revelar" style="--d:${Math.min(i, 6) * 0.08}s">
+        <a class="enlace-prov-principal" href="${esc(it.url)}" target="_blank" rel="noopener">
+          <span class="ep-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ico(cat)}</svg></span>
+          <span class="ep-cat">${esc(cat)}${it.curso ? ` · Curso ${esc(it.curso)}` : ""}</span>
+          <h3>${esc(it.titulo)}</h3>
+          ${it.descripcion ? `<p>${esc(it.descripcion)}</p>` : ""}
+          <span class="ep-ir">Ver en cooperadores-pma.org ${I.flechaDiag}</span>
+        </a>
+        ${it.archivo ? `<a class="ep-archivo" href="${esc(it.archivo)}" target="_blank" rel="noopener">Cursos anteriores</a>` : ""}
+      </article>`;
+    }).join("");
+    revelar(raiz);
+  }
+
+  /* ------------------------------------- Categorías de documentos */
+  function categoriasDocs(raiz, items) {
+    const docs = items.filter((it) => it.seccion === "documentos");
+    $$(".categoria-doc", raiz).forEach((c) => {
+      const n = docs.filter((d) => d.etiquetas.includes(c.dataset.cat)).length;
+      $(".cat-cuenta", c).textContent = n ? `${n} documento${n > 1 ? "s" : ""}` : "Próximamente";
+      c.classList.toggle("vacia", !n);
+      c.addEventListener("click", () => {
+        const chip = $$('.biblioteca[data-seccion="documentos"] .etiquetas-filtro .chip').find((x) => x.dataset.tag === c.dataset.cat);
+        $$(".categoria-doc", raiz).forEach((x) => x.setAttribute("aria-pressed", "false"));
+        if (chip) {
+          if (chip.getAttribute("aria-pressed") !== "true") chip.click();
+          c.setAttribute("aria-pressed", "true");
+        }
+        $('.biblioteca[data-seccion="documentos"]').scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
 
   /* ------------------------------------------------------------- Avisos */
   const HOY = new Date().toISOString().slice(0, 10);
@@ -892,6 +942,8 @@
     $$(".biblioteca[data-seccion]").forEach((r) => biblioteca(r, items));
     $$("[data-ultimos]").forEach((r) => ultimos(r, items));
     $$("[data-avisos]").forEach((r) => paginaAvisos(r, items));
+    $$("[data-categorias-docs]").forEach((r) => categoriasDocs(r, items));
+    $$("[data-enlaces-provincia]").forEach((r) => enlacesProvincia(r, items));
     $$("[data-avisos-inicio]").forEach((r) => avisosInicio(r, items));
     $$("[data-agenda]").forEach((r) => agenda(r, items));
     $$("[data-calendario]").forEach((r) => calendario(r, items));

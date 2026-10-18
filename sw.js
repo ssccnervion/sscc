@@ -1,9 +1,9 @@
 /* Service worker · Salesianos Cooperadores Nervión
    Cambia VERSION cada vez que publiques cambios en el diseño para que la app se actualice. */
-const VERSION = "sscc-v1";
+const VERSION = "sscc-v2";
 const NUCLEO = [
   "./", "index.html", "temas.html", "oraciones.html", "quienes-somos.html", "provincia.html",
-  "avisos.html", "enviar.html", "offline.html", "manifest.webmanifest",
+  "avisos.html", "enviar.html", "documentos.html", "offline.html", "manifest.webmanifest",
   "assets/css/styles.css", "assets/js/config.js", "assets/js/contenido.js", "assets/js/main.js",
   "assets/fonts/Gilroy-Light.woff2", "assets/fonts/Gilroy-ExtraBold.woff2",
   "assets/img/logo-blanco.png", "assets/img/logo-color.png", "assets/img/logo-csjm.png",

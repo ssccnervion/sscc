@@ -15,7 +15,7 @@ window.SSCC_CONFIG = {
   // Correo de contacto (la cuenta de Google que vais a crear).
   // También es donde llega el formulario «Enviar material» (servicio gratuito
   // FormSubmit: el primer envío manda un correo de activación que hay que confirmar).
-  email: "",
+  email: "sscc.nervion@gmail.com",
 
   // (Opcional) Si preferís usar un Formulario de Google, pega aquí su enlace
   // "insertar" (…/viewform?embedded=true) y sustituirá al formulario de la web.
@@ -41,7 +41,8 @@ window.SSCC_CONFIG = {
   carpetas: {
     temas: "",
     oraciones: "",
-    provincia: ""
+    provincia: "",
+    documentos: ""
   },
 
   // Dirección para el mapa de "Quiénes somos"

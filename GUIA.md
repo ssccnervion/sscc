@@ -13,6 +13,7 @@ sscc-nervion-web/
 ├── provincia.html        Provincia María Auxiliadora
 ├── avisos.html           Avisos y calendario
 ├── enviar.html           Formulario «Enviar material»
+├── documentos.html       Documentos del centro (proyecto, actas, memoria)
 ├── offline.html          Página que se ve sin conexión
 ├── manifest.webmanifest  Datos de la app (nombre, iconos, colores)
 ├── sw.js                 Funcionamiento sin conexión de la app
@@ -39,8 +40,13 @@ Abre una terminal en esta carpeta y ejecuta `python3 -m http.server 8000`. Despu
 ### 1. Crear la cuenta
 Crea una cuenta de Gmail para el centro (p. ej. `sscc.nervion@gmail.com`, si está libre) y pon ese correo en `config.js` → `email`.
 
+### ¿Dónde guardar los archivos? (recomendado: Google Drive)
+La web **no necesita guardar los PDF ni los vídeos**: basta con poner su enlace de Drive o YouTube y la web los muestra en su visor. Así, subir material es solo subirlo a Drive y pegar el enlace (en la hoja o en `contenido.js`), sin volver a publicar la web. La carpeta `material/` del proyecto es solo para casos puntuales.
+
+Ojo con los datos personales: lo que se enlaza desde la web lo puede ver cualquiera. Si algún documento no debe ser público, compártelo en Drive **solo con los miembros del centro** en lugar de «cualquier persona con el enlace».
+
 ### 2. Google Drive: el material
-1. En Drive, crea las carpetas **Temas**, **Oraciones** y **Provincia**.
+1. En Drive (cuenta `sscc.nervion@gmail.com`), crea las carpetas **Temas**, **Oraciones**, **Provincia** y **Documentos del centro** (con subcarpetas *Proyecto de centro*, *Actas* y *Memoria*).
 2. Sube allí los PDF, vídeos, presentaciones…
 3. Compártelas: botón derecho → *Compartir* → *Acceso general* → **Cualquier persona con el enlace** (Lector).
 4. Pega el enlace de cada carpeta en `config.js` → `carpetas`. Aparecerá un botón «Abrir carpeta en Drive» en cada sección.
@@ -51,7 +57,8 @@ La web convierte sola los enlaces de **Drive, Docs, Presentaciones, YouTube y Vi
 1. Crea una Hoja de cálculo en la cuenta y en la fila 1 pon estas columnas (o importa `plantilla-hoja-google.csv`):
    `seccion | titulo | descripcion | tipo | url | fecha | curso | etiquetas | destacado | texto | caduca | hora | lugar`
 2. Cada fila es una tarjeta de la web:
-   - **seccion**: `temas`, `oraciones`, `provincia`, `avisos` o `calendario`
+   - **seccion**: `temas`, `oraciones`, `provincia`, `documentos`, `avisos` o `calendario`
+   - **etiquetas** en `documentos`: `Proyecto de centro`, `Actas` o `Memoria` (es la categoría)
    - **tipo**: `pdf`, `video`, `audio`, `presentacion`, `documento`, `carpeta`, `enlace` o `texto`
    - **fecha**: `2026-11-07` (año-mes-día)
    - **etiquetas**: separadas por comas (`Adviento, Formación`)
@@ -90,7 +97,7 @@ Alternativa: crea un Formulario de Google y pega su enlace de inserción en `con
 - **App instalable**: la web se puede instalar como app desde el botón «App» de la cabecera, la sección «Llévanos en el bolsillo» de la portada o el pie. En Android y ordenador abre la instalación directa; en iPhone muestra los pasos (Safari → Compartir → Añadir a pantalla de inicio). La app funciona sin conexión con las páginas ya visitadas.
 - **Al publicar cambios de diseño**, sube el número de `VERSION` en `sw.js` (p. ej. `sscc-v2`) para que las apps instaladas se actualicen.
 - **Icono de la app**: `assets/img/icon-*.png` (diseño original en `app-icon-1024.png`).
-- **Imagen al compartir por WhatsApp**: `assets/img/compartir.jpg` (1200×630). WhatsApp necesita la dirección completa de la web: en todas las páginas `.html` busca `https://TU_USUARIO.github.io/sscc-nervion-web/` y sustitúyelo por la dirección real. WhatsApp guarda la vista previa un tiempo; si no cambia, prueba a compartir el enlace añadiendo `?v=2` al final.
+- **Imagen al compartir por WhatsApp**: `assets/img/compartir.jpg` (1200×630). Las páginas ya apuntan a la dirección pública `https://sscc-nervion.vercel.app/`; si algún día cambia, busca y sustituye esa dirección en todos los `.html`. WhatsApp guarda la vista previa un tiempo; si no cambia, prueba a compartir el enlace añadiendo `?v=2` al final.
 
 ## Personalizar
 
