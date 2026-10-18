@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enviar material · Salesianos Cooperadores Nervión</title>
+  <meta name="description" content="Envía un tema, una oración u otro material al Centro de Salesianos Cooperadores de Nervión.">
+  <meta name="theme-color" content="#006a92">
+  <link rel="icon" href="assets/img/favicon.png">
+  <link rel="preload" href="assets/fonts/Gilroy-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-pagina="enviar">
+
+<main>
+
+  <section class="page-hero">
+    <canvas aria-hidden="true"></canvas>
+    <span class="petalo petalo--a"></span><span class="petalo petalo--b"></span>
+    <span class="numero" aria-hidden="true"><b>/</b>06</span>
+    <div class="contenedor">
+      <span class="kicker">Comparte</span>
+      <h1>Envía tu <span class="resalte">material</span></h1>
+      <p>¿Has preparado un tema, una oración o un recurso? Mándanoslo: le daremos el formato corporativo y lo compartiremos con todo el centro.</p>
+    </div>
+    <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor envio">
+      <div class="revelar">
+        <span class="kicker">Cómo funciona</span>
+        <h2>De tu borrador a la web</h2>
+        <ol class="pasos">
+          <li><div><b>Lo envías</b><span>Rellena el formulario y adjunta el archivo o pega el enlace de Drive o YouTube.</span></div></li>
+          <li><div><b>Le damos formato</b><span>Lo adaptamos a la plantilla corporativa de los Salesianos Cooperadores.</span></div></li>
+          <li><div><b>Se publica</b><span>Aparece en su sección de la web para todo el centro.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="formulario revelar" style="--d:.1s">
+        <form data-envio method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="_subject" value="[Web SSCC] Nuevo material">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="">
+          <input type="hidden" name="_url" value="">
+          <input type="hidden" name="_replyto" value="">
+          <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <div class="form-rejilla">
+            <fieldset class="campo ancho">
+              <legend>¿Qué quieres enviar?</legend>
+              <div class="tipos-material">
+                <input type="radio" id="t-tema" name="tipo_material" value="Tema" checked><label for="t-tema">Tema</label>
+                <input type="radio" id="t-oracion" name="tipo_material" value="Oración"><label for="t-oracion">Oración</label>
+                <input type="radio" id="t-aviso" name="tipo_material" value="Aviso"><label for="t-aviso">Aviso o fecha</label>
+                <input type="radio" id="t-provincia" name="tipo_material" value="Provincia"><label for="t-provincia">Material de la Provincia</label>
+                <input type="radio" id="t-otro" name="tipo_material" value="Otro"><label for="t-otro">Otro</label>
+              </div>
+            </fieldset>
+
+            <div class="campo"><label for="f-nombre">Tu nombre</label><input id="f-nombre" name="nombre" required autocomplete="name"></div>
+            <div class="campo"><label for="f-correo">Tu correo <small>(para responderte)</small></label><input id="f-correo" name="correo" type="email" required autocomplete="email"></div>
+
+            <div class="campo ancho"><label for="f-titulo">Título</label><input id="f-titulo" name="titulo" required placeholder="Ej.: Oración para el día de Don Bosco"></div>
+
+            <div class="campo ancho"><label for="f-texto">Descripción o texto <small>(puedes pegar aquí la oración completa)</small></label><textarea id="f-texto" name="texto" required></textarea></div>
+
+            <div class="campo"><label for="f-fecha">Fecha <small>(si es un aviso o evento)</small></label><input id="f-fecha" name="fecha" type="date"></div>
+            <div class="campo"><label for="f-enlace">Enlace <small>(Drive, YouTube…)</small></label><input id="f-enlace" name="enlace" type="url" placeholder="https://"></div>
+
+            <div class="campo ancho">
+              <label>Archivo <small>(PDF, Word, PowerPoint o imagen · máx. 5 MB)</small></label>
+              <div class="soltar">
+                <input type="file" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.odt,.jpg,.jpeg,.png">
+                <span class="ico-subir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6M5 20h14"/></svg></span>
+                <span><b>Arrastra el archivo aquí</b> o pulsa para elegirlo</span>
+                <span class="archivo-nombre" aria-live="polite"></span>
+              </div>
+            </div>
+
+            <label class="check ancho"><input type="checkbox" name="permiso" value="Sí" required> Autorizo a adaptar este material al formato corporativo y a publicarlo en la web del centro.</label>
+          </div>
+
+          <div class="form-acciones">
+            <small>Llegará al correo del centro.</small>
+            <button class="btn" type="submit">Enviar material <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/contenido.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
