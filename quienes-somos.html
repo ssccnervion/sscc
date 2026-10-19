@@ -35,7 +35,8 @@
 <body data-pagina="quienes-somos">
 
 <main>
-  <section class="page-hero" style="--acento: var(--oro)">
+
+  <section class="page-hero">
     <canvas aria-hidden="true"></canvas>
     <span class="petalo petalo--a"></span><span class="petalo petalo--b"></span>
     <span class="numero" aria-hidden="true"><b>/</b>3</span>
@@ -47,54 +48,33 @@
     <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
   </section>
 
-  <section class="seccion">
-    <div class="contenedor dos-col">
-      <div class="revelar">
-        <span class="kicker">La Asociación</span>
-        <p class="texto-grande">La Asociación de Salesianos Cooperadores, fundada por <b>Don Bosco</b>, es una de las ramas de la Familia Salesiana con mayor raigambre en el mundo.</p>
-        <p>Somos Iglesia con el estilo de Don Bosco y miramos al futuro con ojos abiertos a la realidad social y cultural en la que vivimos, tal como recoge nuestro Proyecto de Vida Apostólica. Nos reconocemos personas creativas, vivaces y entusiastas, llamadas a ser sal y fermento de la sociedad.</p>
-        <p>Nos organizamos en cuatro ámbitos —mundial, regional, provincial y local— y en todos ellos vivimos la misión insertos en la Iglesia local y en las Comunidades Educativo-Pastorales.</p>
-        <div class="acciones">
-          <a class="btn" data-enlace="webProvincia" target="_blank" rel="noopener" hidden>Provincia María Auxiliadora <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
-          <a class="btn btn--linea" data-enlace="webRegion" target="_blank" rel="noopener" hidden>Región Ibérica <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
-        </div>
-      </div>
-      <div class="niveles revelar" style="--d:.1s" aria-label="Ámbitos de la Asociación">
-        <div class="nivel">Mundial</div>
-        <div class="nivel">Región Ibérica</div>
-        <div class="nivel">Provincia</div>
-        <div class="nivel">Centro<br>Nervión</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="seccion seccion--azul">
+  <section class="seccion" style="padding-bottom:0">
     <div class="contenedor">
-      <div class="cabeza revelar">
-        <div><span class="kicker">Lo que vivimos</span><h2>Nuestra vida de centro</h2></div>
-        <p>Cuatro pilares que dan forma a cada encuentro y a nuestro compromiso diario.</p>
-      </div>
-      <div class="pilares">
-        <div class="pilar revelar"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M7 7h10"/></svg></div><h3>Oración</h3><p>Rezamos juntos y cuidamos nuestra vida interior al estilo salesiano: sencillo, alegre y cercano.</p></div>
-        <div class="pilar revelar" style="--d:.08s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg></div><h3>Formación</h3><p>Profundizamos en el carisma de Don Bosco y en nuestra vocación con los temas de cada curso.</p></div>
-        <div class="pilar revelar" style="--d:.16s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 6 4.8"/></svg></div><h3>Comunidad</h3><p>Compartimos la vida como familia: nos acompañamos, celebramos y nos cuidamos.</p></div>
-        <div class="pilar revelar" style="--d:.24s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></div><h3>Misión</h3><p>Servimos a los jóvenes, sobre todo a los más necesitados, allí donde estamos.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="seccion">
-    <div class="contenedor">
-      <div class="cabeza revelar">
-        <div><span class="kicker">Consejo local</span><h2>Quién coordina el centro</h2></div>
-        <p>Sustituye estos huecos por los nombres y las fotos del consejo local (carpeta <b>assets/img</b>).</p>
-      </div>
-      <div class="consejo">
-        <div class="persona revelar"><div class="foto">C</div><h3>Coordinador/a</h3><p>Nombre y apellidos</p></div>
-        <div class="persona revelar" style="--d:.08s"><div class="foto">S</div><h3>Secretaría</h3><p>Nombre y apellidos</p></div>
-        <div class="persona revelar" style="--d:.16s"><div class="foto">A</div><h3>Administración</h3><p>Nombre y apellidos</p></div>
-        <div class="persona revelar" style="--d:.24s"><div class="foto">F</div><h3>Formación</h3><p>Nombre y apellidos</p></div>
-        <div class="persona revelar" style="--d:.32s"><div class="foto">D</div><h3>Delegado/a</h3><p>Nombre y apellidos</p></div>
+      <div class="bento bento-material bento-3">
+        <a class="acceso revelar" href="asociacion.html">
+          <span class="num">/3A · Asociación</span>
+          <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.5 20.5 7.3v9.4L12 21.5l-8.5-4.8V7.3z"/><path d="M12 8.5 15 10.2v3.6L12 15.5l-3-1.7v-3.6z"/></svg>
+          <span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <h3>Asociación</h3>
+          <p>Quiénes son los Salesianos Cooperadores y cómo nos organizamos en el mundo.</p>
+          <span class="deco"></span>
+        </a>
+        <a class="acceso revelar" style="--d:.08s" href="centro.html">
+          <span class="num">/3B · Centro</span>
+          <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 6 4.8"/></svg>
+          <span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <h3>Centro Nervión</h3>
+          <p>Lo que vivimos, el consejo local y las personas que formamos el centro.</p>
+          <span class="deco"></span>
+        </a>
+        <a class="acceso revelar" style="--d:.16s" href="grupos.html">
+          <span class="num">/3C · Grupos</span>
+          <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="7" r="2.5"/><circle cx="12" cy="15" r="2.5"/><path d="M2 21a4 4 0 0 1 8 0M14 21a4 4 0 0 1 8 0M8 12h8"/></svg>
+          <span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <h3>Grupos</h3>
+          <p>Los grupos de formación y de aspirantes, con sus días y horarios.</p>
+          <span class="deco"></span>
+        </a>
       </div>
     </div>
   </section>
@@ -118,6 +98,7 @@
       </div>
     </div>
   </section>
+
 </main>
 
 <script src="assets/js/config.js"></script>

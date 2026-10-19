@@ -44,7 +44,7 @@
     <div class="contenedor">
       <span class="kicker">Curso 2026-2027</span>
       <h1>Calendario <span class="resalte">del centro</span></h1>
-      <p>Todas las fechas del curso de un vistazo. Cada símbolo te dice qué hay ese día: grupo, aspirantes, Eucaristía, retiro, convivencia…</p>
+      <p>Las fechas del centro, de la Provincia y de la Región en un solo calendario. Cada símbolo te dice qué hay ese día, y puedes elegir qué ver.</p>
       <div class="acciones">
         <a class="btn btn--oro" href="#mes">Ver el mes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a class="btn btn--claro" href="#proximos">Próximos encuentros</a>
@@ -60,6 +60,7 @@
         <div><span class="kicker">Calendario</span><h2>El mes de un vistazo</h2></div>
         <p>Pulsa un día para ver sus encuentros y añádelos a tu propio calendario con un clic.</p>
       </div>
+      <div class="barra-ambitos revelar" data-ambitos></div>
       <div class="calendario revelar" data-calendario></div>
     </div>
   </section>
@@ -71,7 +72,14 @@
         <div class="sus-texto">
           <span class="kicker">Siempre al día</span>
           <h2>Suscríbete al calendario</h2>
-          <p>Añádelo una vez a tu móvil o a tu ordenador y te aparecerán todos los encuentros del centro. Cuando se añada o cambie una fecha, se actualizará solo.</p>
+          <p>Añádelo una vez a tu móvil o a tu ordenador y te aparecerán los encuentros. Elige si quieres también las fechas de la Provincia y de la Región. Cuando se añada o cambie una fecha, se actualizará solo.</p>
+        </div>
+        <div class="sus-derecha">
+        <div class="sus-ambitos">
+          <span>Incluir fechas de:</span>
+          <label><input type="checkbox" value="centro" checked> Centro</label>
+          <label><input type="checkbox" value="provincia" checked> Provincia</label>
+          <label><input type="checkbox" value="region" checked> Región</label>
         </div>
         <div class="sus-botones">
           <a class="sus-btn" data-sus="google" target="_blank" rel="noopener">
@@ -90,6 +98,7 @@
             <span class="sus-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>
             <span><b>Copiar enlace</b><small class="sus-copiado">Para otras aplicaciones</small></span>
           </button>
+        </div>
         </div>
       </div>
     </div>

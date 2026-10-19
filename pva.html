@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Proyecto de Vida Apostólica (PVA) · Salesianos Cooperadores Nervión</title>
+  <meta name="description" content="Proyecto de Vida Apostólica de los Salesianos Cooperadores: descárgalo, léelo con índice y mira los vídeos del PVA ¡vivo! de la Provincia María Auxiliadora.">
+  <meta name="theme-color" content="#006a92">
+  <!-- Iconos y app (PWA) -->
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SSCC Nervión">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- Vista previa al compartir (WhatsApp, Telegram, redes) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Salesianos Cooperadores · Centro Nervión">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Proyecto de Vida Apostólica (PVA) · SSCC Nervión">
+  <meta property="og:description" content="Proyecto de Vida Apostólica de los Salesianos Cooperadores: descárgalo, léelo con índice y mira los vídeos del PVA ¡vivo! de la Provincia María Auxiliadora.">
+  <meta property="og:url" content="https://sscc-nervion.vercel.app/pva.html">
+  <meta property="og:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Salesianos Cooperadores · Centro Nervión · Sevilla">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sscc-nervion.vercel.app/assets/img/compartir.jpg">
+  <link rel="preload" href="assets/fonts/Gilroy-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-pagina="pva">
+
+<main>
+
+  <section class="page-hero">
+    <canvas aria-hidden="true"></canvas>
+    <span class="petalo petalo--a"></span><span class="petalo petalo--b"></span>
+    <span class="numero" aria-hidden="true"><b>/</b>1D</span>
+    <div class="contenedor">
+      <span class="kicker">Estatuto · 2013</span>
+      <h1>Proyecto de <span class="resalte">Vida Apostólica</span></h1>
+      <p>Nuestra carta de identidad en la Iglesia, en la Familia Salesiana y en la sociedad. Léelo aquí con su índice, descárgalo o recórrelo con los vídeos del «PVA ¡vivo!».</p>
+      <div class="acciones">
+        <a class="btn btn--oro" href="#leer">Leer el PVA <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn--claro" href="material/pva/proyecto-de-vida-apostolica-salesianos-cooperadores.pdf" download="Proyecto de Vida Apostólica - Salesianos Cooperadores.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg> Descargar PDF</a>
+        <a class="btn btn--claro" href="#vivo">PVA ¡vivo!</a>
+      </div>
+    </div>
+    <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
+  </section>
+
+  <section class="seccion pva-seccion" id="leer">
+    <div class="contenedor">
+      <div class="pva-lector" id="pva-lector">
+        <aside class="pva-indice" aria-label="Índice del PVA">
+          <div class="pva-indice-cab">
+            <b>Índice</b>
+            <label class="pva-buscar-caja"><span class="sr-only">Buscar en el índice</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input class="pva-buscar" type="search" placeholder="Buscar artículo…"></label>
+          </div>
+          <ul class="pva-indice-lista"></ul>
+        </aside>
+        <div class="pva-visor">
+          <div class="pva-barra">
+            <button class="pva-btn pva-btn-indice" data-pva="indice" type="button" aria-label="Mostrar índice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Índice</span></button>
+            <button class="pva-btn" data-pva="ant" type="button" aria-label="Página anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+            <span class="pva-pagina-actual">1 / 30</span>
+            <button class="pva-btn" data-pva="sig" type="button" aria-label="Página siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+            <span class="pva-sep"></span>
+            <button class="pva-btn" data-pva="menos" type="button" aria-label="Reducir">−</button>
+            <button class="pva-btn" data-pva="mas" type="button" aria-label="Ampliar">+</button>
+            <button class="pva-btn pva-solo-escritorio" data-pva="completa" type="button" aria-label="Pantalla completa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+            <a class="pva-btn pva-solo-escritorio" href="material/pva/proyecto-de-vida-apostolica-salesianos-cooperadores.pdf" download="Proyecto de Vida Apostólica - Salesianos Cooperadores.pdf" aria-label="Descargar PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+          </div>
+          <div class="pva-paginas" tabindex="0" aria-label="Páginas del Proyecto de Vida Apostólica"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--blanca" id="vivo">
+    <div class="contenedor">
+      <div class="cabeza revelar">
+        <div><span class="kicker">Provincia María Auxiliadora</span><h2>PVA <span class="slash">¡vivo!</span></h2></div>
+        <p>Vídeos de la Provincia que explican el Estatuto artículo a artículo. Abre cada capítulo para ver sus vídeos o ir directamente a su texto. <a href="https://cooperadores-pma.org/Documentos/Proyecto-de-Vida-Apostolica-PVA-VIVO/" target="_blank" rel="noopener">Ver en cooperadores-pma.org</a></p>
+      </div>
+      <div class="vivo-lista" id="pva-vivo-lista"></div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/contenido.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="assets/js/pva-datos.js"></script>
+<script src="assets/js/pva.js"></script>
+</body>
+</html>

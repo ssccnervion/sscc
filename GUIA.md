@@ -14,6 +14,8 @@ sscc-nervion-web/
 ├── avisos.html           Avisos y calendario
 ├── enviar.html           Formulario «Enviar material»
 ├── documentos.html       Documentos del centro (proyecto, actas, memoria)
+├── pva.html              Proyecto de Vida Apostólica (lector y vídeos)
+├── asociacion.html · centro.html · grupos.html   Quiénes somos (3A, 3B, 3C)
 ├── panel.html            Panel de gestión (publicar sin tocar código)
 ├── google/Codigo.gs      «Servidor» en Google: Hoja, Drive y correo
 ├── offline.html          Página que se ve sin conexión
@@ -115,6 +117,23 @@ Alternativa: crea un Formulario de Google y pega su enlace de inserción en `con
 - **Netlify Drop** (lo más fácil): entra en https://app.netlify.com/drop con la cuenta de Google y arrastra esta carpeta. Te da una dirección pública al momento.
 - **GitHub Pages**: sube la carpeta a un repositorio y activa *Settings → Pages*.
 - **Dominio propio** (opcional): ambos permiten conectar uno tipo `ssccnervion.org`.
+
+## Cursos e histórico
+
+Todo el material lleva su **curso** (septiembre a agosto); el panel lo calcula solo a partir de la fecha. Cada biblioteca muestra por defecto el curso actual y tiene un selector «Curso» para ver los anteriores como histórico. Lo que no lleva curso (himno, PVA…) se ve siempre. Los **grupos** también van por curso; el **elenco** no.
+
+## Avisos
+
+El tablón (`avisos.html`) junta avisos vigentes, próximos encuentros (30 días) y novedades de la web (último mes). Lo pasado va a «Fechas anteriores». Un aviso sin «Visible hasta» se archiva al mes. Solo los avisos marcados como **Ventana emergente** salen como notificación flotante.
+
+## Quiénes somos y PVA
+
+- `asociacion.html` (3A), `centro.html` (3B: vida, consejo y **elenco**) y `grupos.html` (3C). Elenco y grupos se publican desde el panel.
+- `pva.html` (1D): lector del PVA con índice (`assets/js/pva-datos.js`) y vídeos del «PVA ¡vivo!». Para añadir un vídeo nuevo, pon `v: "ID"` en su artículo en ese archivo.
+
+## Calendario: centro, Provincia y Región
+
+Un solo calendario con tres ámbitos (`ambito`: `centro`, `provincia`, `region`), cada uno con su símbolo: casa azul (centro, con su tipo de encuentro), hexágono morado (Provincia) y globo naranja (Región). En la página Calendario cada persona elige qué ver; la suscripción también permite elegir qué fechas incluir (`/calendario.ics?ambitos=centro,provincia`). Las fechas de varios días llevan `fin`. En el panel, al publicar una fecha, se elige su ámbito.
 
 ## Suscripción al calendario
 
