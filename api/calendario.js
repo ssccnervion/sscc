@@ -68,6 +68,13 @@ module.exports = async (req, res) => {
     } catch (e) { /* si Google no responde, se sirven las fechas locales */ }
   }
 
+  // ?ambitos=centro,provincia → solo esas fechas
+  const q = new URL(req.url || "/", base).searchParams.get("ambitos");
+  const elegidos = q ? q.split(",").map((x) => x.trim().toLowerCase()) : null;
+  const ambitoDe = (e) => ({ "región": "region", region: "region", provincia: "provincia" })[String(e.ambito || "").toLowerCase()] || "centro";
+  if (elegidos) eventos = eventos.filter((e) => elegidos.includes(ambitoDe(e)));
+  const PREFIJO = { provincia: "[Provincia] ", region: "[Región] ", centro: "" };
+
   const ahora = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
   const nombre = `Salesianos Cooperadores · ${cfg.centro || "Centro Nervión"}`;
   const L = [
@@ -87,13 +94,14 @@ module.exports = async (req, res) => {
     if (vistos.has(id)) continue;
     vistos.add(id);
     L.push("BEGIN:VEVENT", `UID:${id}`, `DTSTAMP:${ahora}`);
-    if (/^\d{1,2}:\d{2}$/.test(e.hora || "")) {
+    const fin = /^\d{4}-\d{2}-\d{2}$/.test(e.fin || "") ? e.fin : "";
+    if (/^\d{1,2}:\d{2}$/.test(e.hora || "") && !fin) {
       const ini = sumarMinutos(e.fecha, e.hora, 0);
       L.push(`DTSTART;TZID=Europe/Madrid:${ini}`, `DTEND;TZID=Europe/Madrid:${sumarMinutos(e.fecha, e.hora, 90)}`);
     } else {
-      L.push(`DTSTART;VALUE=DATE:${e.fecha.replace(/-/g, "")}`, `DTEND;VALUE=DATE:${diaSiguiente(e.fecha)}`);
+      L.push(`DTSTART;VALUE=DATE:${e.fecha.replace(/-/g, "")}`, `DTEND;VALUE=DATE:${diaSiguiente(fin || e.fecha)}`);
     }
-    L.push(`SUMMARY:${esc(e.titulo)}`);
+    L.push(`SUMMARY:${esc(PREFIJO[ambitoDe(e)] + e.titulo)}`, `CATEGORIES:${ambitoDe(e) === "region" ? "Región" : ambitoDe(e) === "provincia" ? "Provincia" : "Centro"}`);
     if (e.lugar) L.push(`LOCATION:${esc(e.lugar)}`);
     const desc = [e.descripcion, `${base}/calendario.html`].filter(Boolean).join("\n\n");
     L.push(`DESCRIPTION:${esc(desc)}`, `URL:${base}/calendario.html`, "END:VEVENT");
