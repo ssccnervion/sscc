@@ -14,7 +14,7 @@
         (Ejecutar como: yo · Acceso: cualquier usuario) y copia la URL.
    ========================================================================= */
 
-const CLAVE = "cambia-esta-clave";               // clave del panel de gestión
+const CLAVE = "cambia-esta-clave";   // ← ESCRIBE AQUÍ LA CLAVE DEL PANEL (entre las comillas)
 const CORREO_AVISOS = "sscc.nervion@gmail.com";  // dónde llegan las propuestas
 const URL_WEB = "https://sscc-nervion.vercel.app/";
 const NOMBRE_CARPETA = "Web SSCC Nervión";
@@ -22,12 +22,12 @@ const NOMBRE_CARPETA = "Web SSCC Nervión";
 const HOJA = "Material";
 const HOJA_PROP = "Propuestas";
 const COLUMNAS = ["id", "seccion", "titulo", "descripcion", "tipo", "url", "fecha", "curso", "etiquetas",
-  "destacado", "texto", "caduca", "hora", "lugar", "archivo", "visible", "creado"];
+  "destacado", "texto", "caduca", "hora", "lugar", "archivo", "visible", "creado", "emergente", "imagen", "ambito", "fin"];
 const COL_PROP = ["id", "recibido", "nombre", "correo", "tipo_material", "titulo", "texto", "fecha",
   "enlace", "archivo", "estado"];
-const SUBCARPETAS = { temas: "Temas", oraciones: "Oraciones", provincia: "Provincia", documentos: "Documentos del centro",
+const SUBCARPETAS = { temas: "Temas", oraciones: "Oraciones", provincia: "Provincia", documentos: "Documentos del centro", elenco: "Elenco", grupos: "Grupos",
   avisos: "Avisos", calendario: "Calendario", "provincia-web": "Provincia", propuestas: "Propuestas recibidas" };
-const TEXTO_PLANO = ["fecha", "curso", "hora", "caduca", "recibido", "creado"];
+const TEXTO_PLANO = ["fecha", "curso", "hora", "caduca", "recibido", "creado", "fin"];
 
 /* ------------------------------------------------------------- Instalar */
 function instalar() {
@@ -58,6 +58,14 @@ function libro() {
 
 function hoja(ss, nombre, cols) {
   let h = ss.getSheetByName(nombre);
+  if (h) {
+    // Añade las columnas nuevas que falten (al actualizar el código)
+    const cab = h.getRange(1, 1, 1, Math.max(1, h.getLastColumn())).getValues()[0];
+    cols.filter((c) => cab.indexOf(c) < 0).forEach((c) => {
+      const col = h.getLastColumn() + 1;
+      h.getRange(1, col).setValue(c).setFontWeight("bold").setBackground("#006a92").setFontColor("#ffffff");
+    });
+  }
   if (!h) {
     h = ss.insertSheet(nombre);
     h.getRange(1, 1, 1, cols.length).setValues([cols])
@@ -106,7 +114,8 @@ function filas(nombre) {
 
 function anadir(nombre, cols, obj) {
   const h = libro().getSheetByName(nombre);
-  h.appendRow(cols.map((c) => (obj[c] === undefined ? "" : obj[c])));
+  const cab = h.getRange(1, 1, 1, h.getLastColumn()).getValues()[0];   // respeta el orden real de la hoja
+  h.appendRow(cab.map((c) => (obj[c] === undefined ? "" : obj[c])));
 }
 
 function buscarFila(nombre, id) {
@@ -140,7 +149,9 @@ function curso(fecha) {
 }
 
 function comprobarClave(d) {
-  if (!d || d.clave !== CLAVE || CLAVE === "cambia-esta-clave") throw new Error("Clave incorrecta");
+  const clave = String(CLAVE || "").trim();
+  if (clave.length < 4 || /^cambia/i.test(clave)) throw new Error("Falta poner la clave en el servidor (línea const CLAVE)");
+  if (!d || String(d.clave || "").trim() !== clave) throw new Error("Clave incorrecta");
 }
 
 /* ------------------------------------------------------- Lectura pública */
@@ -185,13 +196,15 @@ function publicar(d) {
   const it = d.item || {};
   if (!it.titulo || !it.seccion) throw new Error("Faltan el título o la sección");
   const f = guardarArchivo(d.archivo, it.seccion);
+  const esImagen = f && /^image\//.test(f.getMimeType());
+  const cartel = (it.seccion === "avisos" || it.seccion === "elenco") && esImagen;   // cartel del aviso o foto de la persona
   const fila = {
     id: Utilities.getUuid(),
     seccion: it.seccion,
     titulo: it.titulo,
     descripcion: it.descripcion || "",
     tipo: it.tipo || "",
-    url: f ? f.getUrl() : (it.url || ""),
+    url: f && !cartel ? f.getUrl() : (it.url || ""),
     fecha: it.fecha || Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd"),
     curso: it.curso || curso(it.fecha),
     etiquetas: Array.isArray(it.etiquetas) ? it.etiquetas.join(", ") : (it.etiquetas || ""),
@@ -202,7 +215,11 @@ function publicar(d) {
     lugar: it.lugar || "",
     archivo: f ? f.getId() : (it.archivo || ""),
     visible: "",
-    creado: Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd HH:mm")
+    creado: Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd HH:mm"),
+    emergente: it.emergente ? "sí" : "",
+    imagen: cartel ? "https://drive.google.com/thumbnail?id=" + f.getId() + "&sz=w1200" : (it.imagen || ""),
+    ambito: it.ambito || "",
+    fin: it.fin || ""
   };
   anadir(HOJA, COLUMNAS, fila);
   if (d.propuesta) { try { cambiar(HOJA_PROP, d.propuesta, "estado", "publicada"); } catch (e) {} }
