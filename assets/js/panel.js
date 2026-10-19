@@ -21,13 +21,17 @@
     temas:      { nombre: "Tema", desc: "Tema de formación", pagina: "temas.html", ico: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h5"/>',
                   campos: ["titulo", "descripcion", "material", "fecha", "etiquetas", "destacado"] },
     oraciones:  { nombre: "Oración", desc: "Texto, PDF, audio o vídeo", pagina: "oraciones.html", ico: '<path d="M12 2v20M7 7h10"/>',
-                  campos: ["titulo", "descripcion", "texto", "material", "fecha", "etiquetas", "destacado"] },
+                  campos: ["tipoOracion", "titulo", "descripcion", "texto", "material", "fecha", "etiquetas", "destacado"] },
     avisos:     { nombre: "Aviso", desc: "Para el tablón de avisos", pagina: "avisos.html", ico: '<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>',
-                  campos: ["titulo", "textoAviso", "importante", "caduca", "material"] },
+                  campos: ["titulo", "textoAviso", "importante", "emergente", "caduca", "material"] },
     calendario: { nombre: "Fecha", desc: "Encuentro en el calendario", pagina: "calendario.html", ico: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-                  campos: ["titulo", "fechaEvento", "hora", "lugar", "descripcion"] },
+                  campos: ["ambito", "titulo", "fechaEvento", "hora", "lugar", "descripcion"] },
     documentos: { nombre: "Documento del centro", desc: "Proyecto, acta o memoria", pagina: "documentos.html", ico: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
                   campos: ["titulo", "categoria", "descripcion", "material", "fecha", "destacado"] },
+    elenco:     { nombre: "Persona del elenco", desc: "Foto, nombre y vídeo", pagina: "centro.html#elenco", ico: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+                  campos: ["titulo", "descripcion", "material"] },
+    grupos:     { nombre: "Grupo", desc: "Formación o aspirantes", pagina: "grupos.html", ico: '<circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="7" r="2.5"/><circle cx="12" cy="15" r="2.5"/><path d="M2 21a4 4 0 0 1 8 0M14 21a4 4 0 0 1 8 0"/>',
+                  campos: ["tipoGrupo", "titulo", "diaHora", "acompana", "miembros", "fecha"] },
     "provincia-web": { nombre: "Enlace de la web provincial", desc: "Proyecto anual, plan de formación…", pagina: "provincia.html", ico: '<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>',
                   campos: ["titulo", "categoriaProv", "descripcion", "enlace", "archivoProv", "fecha"] },
     provincia:  { nombre: "Comunicado de la Provincia", desc: "Lo que envía el Consejo", pagina: "provincia.html", ico: '<path d="M12 2.5 20.5 7.3v9.4L12 21.5l-8.5-4.8V7.3z"/>',
@@ -182,17 +186,25 @@
               ${["Proyecto de centro", "Actas", "Memoria"].map((c, i) => `<input type="radio" id="cat${i}" name="categoria" value="${c}" ${i === 1 ? "checked" : ""}><label for="cat${i}">${c}</label>`).join("")}
             </div></fieldset>` : ""}
           ${tiene("categoriaProv") ? `<label class="campo"><span>Categoría *</span><input name="categoria" required list="cats-prov" placeholder="Ej.: Proyecto anual"><datalist id="cats-prov"><option value="Lema"><option value="Proyecto anual"><option value="Plan trienal"><option value="Formación"><option value="Asamblea"></datalist><small class="ayuda-campo">Al publicar uno nuevo de la misma categoría, sustituye al del curso anterior.</small></label>` : ""}
-          <label class="campo ancho"><span>Título *</span><input name="titulo" required maxlength="120" value="${esc(ini.titulo || "")}" placeholder="${sec === "avisos" ? "Ej.: Cambio de hora del encuentro" : sec === "calendario" ? "Ej.: Retiro de Cuaresma" : "Ej.: Tema 3 · El Sistema Preventivo"}"></label>
+          ${tiene("tipoOracion") ? `<fieldset class="campo ancho"><legend>¿Para qué es la oración?</legend><div class="tipos-material"><input type="radio" id="to1" name="tipoOracion" value="Encuentros y tiempos fuertes" checked><label for="to1">Encuentros y tiempos fuertes</label><input type="radio" id="to2" name="tipoOracion" value="Grupos"><label for="to2">Para un grupo</label></div></fieldset>
+          <label class="campo ancho campo-grupo" hidden><span>Grupo que la prepara</span><input name="grupoOracion" list="lista-grupos" placeholder="Ej.: Grupo 2"><datalist id="lista-grupos">${[...new Set([...(window.SSCC_CONTENIDO || []), ...datos.items].filter((g) => g.seccion === "grupos").map((g) => g.titulo))].map((g) => `<option value="${esc(g)}">`).join("")}</datalist></label>` : ""}
+          ${tiene("ambito") ? `<fieldset class="campo ancho"><legend>¿De quién es la fecha?</legend><div class="tipos-material"><input type="radio" id="am1" name="ambito" value="centro" checked><label for="am1">Centro Nervión</label><input type="radio" id="am2" name="ambito" value="provincia"><label for="am2">Provincia</label><input type="radio" id="am3" name="ambito" value="region"><label for="am3">Región</label></div></fieldset>` : ""}
+          ${tiene("tipoGrupo") ? `<fieldset class="campo ancho"><legend>Tipo de grupo</legend><div class="tipos-material"><input type="radio" id="tg1" name="categoria" value="Formación" checked><label for="tg1">Formación</label><input type="radio" id="tg2" name="categoria" value="Aspirantes"><label for="tg2">Aspirantes</label></div></fieldset>` : ""}
+          <label class="campo ancho"><span>${sec === "elenco" ? "Nombre *" : sec === "grupos" ? "Nombre del grupo *" : "Título *"}</span><input name="titulo" required maxlength="120" value="${esc(ini.titulo || "")}" placeholder="${sec === "elenco" ? "Ej.: María García" : sec === "grupos" ? "Ej.: Grupo 1" : sec === "avisos" ? "Ej.: Cambio de hora del encuentro" : sec === "calendario" ? "Ej.: Retiro de Cuaresma" : "Ej.: Tema 3 · El Sistema Preventivo"}"></label>
+          ${tiene("diaHora") ? `<label class="campo"><span>Día y hora</span><input name="descripcion" placeholder="Ej.: Lunes · 18:00 h"></label>` : ""}
+          ${tiene("acompana") ? `<label class="campo"><span>Acompaña <small>(opcional)</small></span><input name="lugar" placeholder="Ej.: Esther"></label>` : ""}
+          ${tiene("miembros") ? `<label class="campo ancho"><span>Miembros <small>(uno por línea)</small></span><textarea name="texto" rows="6"></textarea></label>` : ""}
           ${tiene("fechaEvento") ? `<p class="nota ancho">El símbolo del calendario se pone solo según el título: Grupo, Aspirantes, Misa/Eucaristía, Adoración, Retiro, Convivencia o Navidad.</p>
           <label class="campo"><span>Día *</span><input type="date" name="fecha" required value="${esc(ini.fecha || "")}"></label>
+          <label class="campo"><span>Hasta <small>(si dura varios días)</small></span><input type="date" name="fin"></label>
           <label class="campo"><span>Hora</span><input type="time" name="hora"></label>
           <label class="campo ancho"><span>Lugar</span><input name="lugar" placeholder="Ej.: Salesianos Nervión"></label>` : ""}
           ${tiene("textoAviso") ? `<label class="campo ancho"><span>Texto del aviso * <small>(corto: una o dos frases)</small></span><textarea name="texto" required maxlength="400" rows="3">${esc(ini.texto || "")}</textarea></label>` : ""}
-          ${tiene("descripcion") ? `<label class="campo ancho"><span>Descripción <small>(opcional, una frase)</small></span><input name="descripcion" maxlength="200"></label>` : ""}
+          ${tiene("descripcion") ? `<label class="campo ancho"><span>${sec === "elenco" ? "Una línea sobre la persona <small>(opcional: p. ej. «Salesiana cooperadora desde 2015»)</small>" : "Descripción <small>(opcional, una frase)</small>"}</span><input name="descripcion" maxlength="200"></label>` : ""}
           ${tiene("texto") ? `<label class="campo ancho"><span>Texto de la oración <small>(si no subes archivo)</small></span><textarea name="texto" rows="6">${esc(ini.texto || "")}</textarea></label>` : ""}
           ${tiene("material") ? `
           <div class="campo ancho">
-            <span class="etq">${sec === "avisos" ? "Cartel o enlace <small>(opcional)</small>" : "Archivo o enlace"}</span>
+            <span class="etq">${sec === "avisos" ? "Cartel (imagen) y/o enlace <small>(opcional: p. ej. el formulario de inscripción)</small>" : sec === "elenco" ? "Foto y/o vídeo <small>(vídeo opcional: enlace de YouTube o Drive)</small>" : "Archivo o enlace"}</span>
             <div class="dos-opciones">
               <label class="soltar">
                 <input type="file" name="archivo">
@@ -209,6 +221,7 @@
           ${tiene("archivoProv") ? `<label class="campo ancho"><span>Enlace a los cursos anteriores <small>(opcional)</small></span><input name="archivo" type="url" placeholder="https://cooperadores-pma.org/…"></label>` : ""}
           ${tiene("caduca") ? `<label class="campo"><span>Visible hasta <small>(después pasa a «anteriores»)</small></span><input type="date" name="caduca" min="${hoy()}"></label>` : ""}
           ${tiene("importante") ? `<label class="check-grande"><input type="checkbox" name="destacado"><span><b>Importante</b><small>Sale primero y con aviso al entrar en la web</small></span></label>` : ""}
+          ${tiene("emergente") ? `<label class="check-grande"><input type="checkbox" name="emergente"><span><b>Ventana emergente</b><small>Sale como aviso flotante al entrar en la web. Úsalo solo para lo muy importante.</small></span></label>` : ""}
           ${tiene("fecha") ? `<label class="campo"><span>Fecha</span><input type="date" name="fecha" value="${esc(ini.fecha || hoy())}"></label>` : ""}
           ${tiene("etiquetas") ? `<label class="campo"><span>Etiquetas <small>(separadas por comas)</small></span><input name="etiquetas" list="tags-${sec}" placeholder="Ej.: Adviento, Formación"><datalist id="tags-${sec}">${tagsExistentes.map((t) => `<option value="${esc(t)}">`).join("")}</datalist></label>` : ""}
           ${tiene("destacado") ? `<label class="check-grande"><input type="checkbox" name="destacado"><span><b>Destacar</b><small>Aparece grande arriba de su sección</small></span></label>` : ""}
@@ -232,26 +245,31 @@
       const url = (fd.get("url") || "").trim();
       const texto = (fd.get("texto") || "").trim();
       const fecha = fd.get("fecha") || hoy();
-      const etiquetas = sec === "documentos" || sec === "provincia-web" ? [String(fd.get("categoria") || "").trim()].filter(Boolean) : String(fd.get("etiquetas") || "").split(",").map((t) => t.trim()).filter(Boolean);
+      const tipoOr = fd.get("tipoOracion");
+      const etiquetas = sec === "oraciones" ? [tipoOr, ...String(fd.get("etiquetas") || "").split(",").map((t) => t.trim()).filter(Boolean)].filter(Boolean) : sec === "documentos" || sec === "provincia-web" || sec === "grupos" ? [String(fd.get("categoria") || "").trim()].filter(Boolean) : String(fd.get("etiquetas") || "").split(",").map((t) => t.trim()).filter(Boolean);
       return {
         archivo,
         item: {
           seccion: sec, titulo: (fd.get("titulo") || "").trim(), descripcion: (fd.get("descripcion") || "").trim(),
-          tipo: sec === "calendario" || sec === "avisos" ? "" : sec === "provincia-web" ? "enlace" : tipoDe(archivo, url, texto),
+          tipo: ["calendario", "avisos", "elenco", "grupos"].includes(sec) ? "" : sec === "provincia-web" ? "enlace" : tipoDe(archivo, url, texto),
           archivo: sec === "provincia-web" ? String(fd.get("archivo") || "").trim() : "",
-          url: archivo ? "" : url, fecha, curso: curso(fecha), etiquetas,
-          destacado: !!fd.get("destacado"), texto, caduca: fd.get("caduca") || "",
-          hora: fd.get("hora") || "", lugar: (fd.get("lugar") || "").trim()
+          url: archivo && sec !== "avisos" && sec !== "elenco" ? "" : url, fecha, curso: curso(fecha), etiquetas,
+          destacado: !!fd.get("destacado"), emergente: !!fd.get("emergente"), texto, caduca: fd.get("caduca") || "",
+          hora: fd.get("hora") || "", lugar: sec === "oraciones" ? (tipoOr === "Grupos" ? String(fd.get("grupoOracion") || "").trim() : "") : (fd.get("lugar") || "").trim(),
+          ambito: fd.get("ambito") || "", fin: fd.get("fin") || ""
         }
       };
     }
 
     function vista() {
       const { item, archivo } = leer();
-      const it = S.normalizar({ ...item, titulo: item.titulo || "Título del material", url: item.url || (archivo ? "#archivo" : "") });
+      const it = S.normalizar({ ...item, titulo: item.titulo || "Título del material", url: item.url || (archivo && sec !== "avisos" ? "#archivo" : "") });
       const pv = $(".vista-previa", form);
       pv.innerHTML = "";
-      if (sec === "provincia-web") pv.innerHTML = `<p class="nota">Aparecerá como una tarjeta en la página Provincia, con el botón «Ver en cooperadores-pma.org».</p>`;
+      if ((sec === "avisos" || sec === "elenco") && archivo && /^image\//.test(archivo.type)) it.imagen = URL.createObjectURL(archivo);
+      if (sec === "elenco") pv.innerHTML = `<div class="elenco" style="max-width:200px"><figure class="persona-elenco"><span class="pe-foto">${it.imagen ? `<img src="${esc(it.imagen)}" alt="">` : `<span>${esc((item.titulo || "?").charAt(0))}</span>`}</span><figcaption><b>${esc(item.titulo || "Nombre")}</b><small>${esc(item.descripcion)}</small></figcaption></figure></div>`;
+      else if (sec === "grupos") pv.innerHTML = `<p class="nota">Aparecerá en «Grupos» dentro del curso ${esc(curso(leer().item.fecha))}, con ${String(item.texto || "").split(/\n+/).filter((x) => x.trim()).length} miembros.</p>`;
+      else if (sec === "provincia-web") pv.innerHTML = `<p class="nota">Aparecerá como una tarjeta en la página Provincia, con el botón «Ver en cooperadores-pma.org».</p>`;
       else if (sec === "avisos") pv.innerHTML = `<div class="avisos-lista">${S.avisoHTML({ ...it, texto: it.texto || "Texto del aviso" })}</div>`;
       else if (sec === "calendario") pv.innerHTML = `<div class="agenda">${S.eventoHTML({ ...it, fecha: it.fecha || hoy() })}</div>`;
       else { const t = S.tarjeta(it); t.disabled = true; pv.append(t); }
@@ -272,6 +290,7 @@
       ["dragleave", "drop"].forEach((ev) => zona.addEventListener(ev, () => zona.classList.remove("arrastrando")));
     }
     form.addEventListener("input", vista);
+    $$('[name="tipoOracion"]', form).forEach((r) => r.addEventListener("change", () => { const g = $(".campo-grupo", form); if (g) g.hidden = $('[name="tipoOracion"]:checked', form).value !== "Grupos"; }));
     vista();
     caja.scrollIntoView({ behavior: "smooth", block: "start" });
 
@@ -286,6 +305,7 @@
       else if (["temas", "documentos", "provincia"].includes(sec) && !archivo && !item.url) fallo = "Sube un archivo o pega un enlace.";
       else if (sec === "provincia-web" && (!item.url || !item.etiquetas.length)) fallo = "Indica la categoría y el enlace.";
       else if (sec === "oraciones" && !archivo && !item.url && !item.texto) fallo = "Escribe la oración, sube un archivo o pega un enlace.";
+      else if (sec === "elenco" && !archivo && !item.url) fallo = "Sube la foto de la persona.";
       if (fallo) { err.textContent = fallo; err.hidden = false; return; }
       err.hidden = true;
       const btn = $("button[type=submit]", form);

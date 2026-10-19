@@ -39,13 +39,18 @@
     { id: "material", texto: "Material", href: "material.html", hijos: [
       { id: "temas", cod: "1A", texto: "Temas", href: "temas.html", desc: "Formación de cada curso" },
       { id: "oraciones", cod: "1B", texto: "Oraciones", href: "oraciones.html", desc: "Oraciones e himno" },
-      { id: "documentos", cod: "1C", texto: "Documentos del centro", href: "documentos.html", desc: "Proyecto, actas y memoria" }
+      { id: "documentos", cod: "1C", texto: "Documentos del centro", href: "documentos.html", desc: "Proyecto, actas y memoria" },
+      { id: "pva", cod: "1D", texto: "PVA", href: "pva.html", desc: "Proyecto de Vida Apostólica" }
     ] },
     { id: "calendario", texto: "Calendario", href: "calendario.html", hijos: [
       { id: "calendario-mes", cod: "2A", texto: "Calendario", href: "calendario.html#mes", desc: "Vista del mes con símbolos" },
       { id: "calendario-prox", cod: "2B", texto: "Próximos encuentros", href: "calendario.html#proximos", desc: "La lista de lo que viene" }
     ] },
-    { id: "quienes-somos", texto: "Quiénes somos", href: "quienes-somos.html" },
+    { id: "quienes-somos", texto: "Quiénes somos", href: "quienes-somos.html", hijos: [
+      { id: "asociacion", cod: "3A", texto: "Asociación", href: "asociacion.html", desc: "Los Salesianos Cooperadores en el mundo" },
+      { id: "centro", cod: "3B", texto: "Centro", href: "centro.html", desc: "Lo que vivimos, consejo y elenco" },
+      { id: "grupos", cod: "3C", texto: "Grupos", href: "grupos.html", desc: "Formación y aspirantes" }
+    ] },
     { id: "provincia", texto: "Provincia", href: "provincia.html" },
     { id: "avisos", texto: "Avisos", href: "avisos.html" },
     { id: "enviar", texto: "Enviar material", href: "enviar.html", cta: true }
@@ -274,7 +279,8 @@
   function normalizar(it) {
     const etiquetas = Array.isArray(it.etiquetas) ? it.etiquetas
       : String(it.etiquetas || "").split(/[,;]/).map((s) => s.trim()).filter(Boolean);
-    const destacado = it.destacado === true || /^(si|sí|true|x|1)$/i.test(String(it.destacado || ""));
+    const siNo = (v) => v === true || /^(si|sí|true|x|1)$/i.test(String(v || "").trim());
+    const destacado = siNo(it.destacado);
     const tipo = String(it.tipo || "enlace").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
     return {
       seccion: String(it.seccion || "").toLowerCase().trim(),
@@ -288,6 +294,10 @@
       texto: it.texto || "",
       caduca: it.caduca || "",
       id: it.id || "",
+      emergente: siNo(it.emergente),
+      ambito: ({ "región": "region", region: "region", provincia: "provincia", provincial: "provincia" })[String(it.ambito || "").toLowerCase().trim()] || "centro",
+      fin: /^\d{4}-\d{2}-\d{2}$/.test(it.fin || "") ? it.fin : "",
+      imagen: (it.imagen || "").trim(),
       hora: it.hora || "",
       archivo: /^https?:/.test(it.archivo || "") ? it.archivo.trim() : "",
       lugar: it.lugar || ""
@@ -363,6 +373,17 @@
     return null; // enlace externo que probablemente no se deja incrustar
   }
 
+  /* Párrafos con enlaces y *negritas* (como en WhatsApp) */
+  function parrafos(t) {
+    return String(t || "").split(/\n\s*\n/).filter((x) => x.trim()).map((p) => {
+      let h = esc(p.trim()).replace(/\n/g, "<br>");
+      h = h.replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)»])/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+      h = h.replace(/\*([^*\n]+)\*/g, "<b>$1</b>");
+      if (/^[-•]\s/.test(p.trim())) return `<ul>${h.split("<br>").map((l) => `<li>${l.replace(/^[-•]\s*/, "")}</li>`).join("")}</ul>`;
+      return `<p>${h}</p>`;
+    }).join("");
+  }
+
   /* ------------------------------------------------------------- Visor */
   let visor;
   function crearVisor() {
@@ -391,7 +412,7 @@
     btn.href = it.url || "#";
 
     if (it.tipo === "texto" && it.texto) {
-      cont.innerHTML = `<div class="lectura">${it.texto.split(/\n\s*\n/).map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("")}</div>`;
+      cont.innerHTML = `<div class="lectura">${it.imagen ? `<img class="lectura-img" src="${esc(it.imagen)}" alt="">` : ""}${parrafos(it.texto)}${it.url ? `<p><a class="btn" href="${esc(it.url)}" target="_blank" rel="noopener">Más información ${I.externo}</a></p>` : ""}</div>`;
     } else if (!it.url) {
       cont.innerHTML = `<div class="sin-enlace"><div class="vacio"><div class="hexvacio"></div><h3>Material de ejemplo</h3><p>Aún no tiene enlace. Añade la dirección de Google Drive o YouTube en <b>contenido.js</b> o en la hoja de cálculo.</p></div></div>`;
     } else {
@@ -424,6 +445,7 @@
       <div class="cuerpo">
         <h3>${esc(it.titulo)}</h3>
         ${it.descripcion ? `<p>${esc(it.descripcion)}</p>` : ""}
+        ${it.seccion === "oraciones" && it.lugar ? `<p class="preparada">Preparada por <b>${esc(it.lugar)}</b></p>` : ""}
         <div class="meta">
           ${fecha && !isNaN(fecha) ? `<span class="fecha">${fecha.getDate()} ${MESES[fecha.getMonth()]} ${fecha.getFullYear()}</span>` : ""}
           ${it.etiquetas.slice(0, 3).map((t) => `<span class="tag">${esc(t)}</span>`).join("")}
@@ -449,11 +471,29 @@
     return d;
   }
 
+  /* ---------------------------------------------------------- Cursos */
+  // El curso va de septiembre a agosto: en septiembre empieza uno nuevo y el resto queda como histórico.
+  function cursoDe(fecha) {
+    const m = /^(\d{4})-(\d{2})/.exec(fecha || "");
+    if (!m) return "";
+    const ini = +m[2] >= 9 ? +m[1] : +m[1] - 1;
+    return `${ini}-${String(ini + 1).slice(2)}`;
+  }
+  const CURSO_ACTUAL = cursoDe(new Date().toISOString().slice(0, 10));
+  const cursoItem = (it) => it.curso || "";
+  function selectorCurso(cursos, elegido) {
+    if (!cursos.length) return "";
+    return `<label class="selector-curso"><span>Curso</span>
+      <select>${cursos.map((c) => `<option value="${esc(c)}"${c === elegido ? " selected" : ""}>${esc(c)}${c === CURSO_ACTUAL ? " · actual" : c < CURSO_ACTUAL ? " · histórico" : ""}</option>`).join("")}<option value="*"${elegido === "*" ? " selected" : ""}>Todos los cursos</option></select></label>`;
+  }
+  function cursoInicial(cursos) { return cursos.includes(CURSO_ACTUAL) ? CURSO_ACTUAL : (cursos[0] || "*"); }
+
   /* --------------------------------------------------------- Biblioteca */
   function biblioteca(raiz, items) {
     const secciones = raiz.dataset.seccion.split(",").map((x) => x.trim());
     const conDestacado = raiz.dataset.destacado !== "no";
-    let lista = items.filter((it) => secciones.includes(it.seccion));
+    const soloEtiqueta = raiz.dataset.etiqueta;
+    let lista = items.filter((it) => secciones.includes(it.seccion) && (!soloEtiqueta || it.etiquetas.includes(soloEtiqueta)));
     const estado = { q: "", tipo: "", tag: "", curso: "", sec: "" };
     const NOMBRE_SEC = { temas: "Temas", oraciones: "Oraciones", documentos: "Documentos del centro", provincia: "Provincia" };
 
@@ -463,13 +503,14 @@
     }
 
     const tipos = [...new Set(lista.map((it) => it.tipo))];
-    const tags = [...new Set(lista.flatMap((it) => it.etiquetas))].sort((a, b) => a.localeCompare(b, "es"));
-    const cursos = [...new Set(lista.map((it) => it.curso).filter(Boolean))].sort().reverse();
+    const tags = [...new Set(lista.flatMap((it) => it.etiquetas).filter((t) => t !== soloEtiqueta && !["Encuentros y tiempos fuertes", "Grupos"].includes(t)))].sort((a, b) => a.localeCompare(b, "es"));
+    const cursos = [...new Set(lista.map(cursoItem).filter(Boolean))].sort().reverse();
+    estado.curso = cursos.length > 1 || (cursos.length === 1 && cursos[0] !== CURSO_ACTUAL) ? cursoInicial(cursos) : "*";
     const modoLinea = raiz.dataset.vista === "linea";
 
     raiz.innerHTML = `
       ${secciones.length > 1 ? `<div class="filtros filtro-secciones" role="group" aria-label="Sección"><button class="chip" aria-pressed="true" data-sec="">Todo el material</button>${secciones.map((x) => `<button class="chip" aria-pressed="false" data-sec="${x}">${NOMBRE_SEC[x] || x} <span class="cuenta">${lista.filter((i) => i.seccion === x).length}</span></button>`).join("")}</div>` : ""}
-      ${modoLinea && cursos.length > 1 ? `<div class="cursos" role="group" aria-label="Curso"><button class="chip" aria-pressed="true" data-curso="">Todos</button>${cursos.map((c) => `<button class="chip" aria-pressed="false" data-curso="${esc(c)}">Curso ${esc(c)}</button>`).join("")}</div>` : ""}
+      ${estado.curso !== "*" || cursos.length > 1 ? `<div class="barra-curso">${selectorCurso(cursos, estado.curso)}<span class="nota-curso">Lo que no es de un curso concreto (himno, PVA…) se ve siempre.</span></div>` : ""}
       <div class="biblioteca-controles">
         <label class="buscador"><span class="sr-only">Buscar</span>${I.buscar}<input type="search" placeholder="Buscar ${esc(raiz.dataset.nombre || "material")}…"></label>
         <div class="filtros" role="group" aria-label="Tipo">
@@ -488,12 +529,12 @@
         (!estado.tipo || it.tipo === estado.tipo) &&
         (!estado.sec || it.seccion === estado.sec) &&
         (!estado.tag || it.etiquetas.includes(estado.tag)) &&
-        (!estado.curso || it.curso === estado.curso) &&
+        (estado.curso === "*" || !it.curso || it.curso === estado.curso) &&
         (!q || (it.titulo + " " + it.descripcion + " " + it.etiquetas.join(" ") + " " + it.texto)
           .toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(q)));
       rejilla.innerHTML = "";
       if (!r.length) {
-        rejilla.innerHTML = `<div class="vacio"><div class="hexvacio"></div><p>No hay material que coincida.</p></div>`;
+        rejilla.innerHTML = `<div class="vacio"><div class="hexvacio"></div><p>${esc(lista.length ? "No hay material que coincida." : (raiz.dataset.vacio || "Todavía no hay material aquí."))}</p></div>`;
         return;
       }
       r.forEach((it, i) => {
@@ -504,7 +545,9 @@
       revelar(rejilla);
     }
 
-    $("input", raiz).addEventListener("input", (e) => { estado.q = e.target.value; pintar(); });
+    $("input[type=search]", raiz).addEventListener("input", (e) => { estado.q = e.target.value; pintar(); });
+    const sel = $(".selector-curso select", raiz);
+    if (sel) sel.addEventListener("change", () => { estado.curso = sel.value; pintar(); });
     raiz.addEventListener("click", (e) => {
       const c = e.target.closest(".chip");
       if (!c) return;
@@ -528,7 +571,7 @@
   /* ---------------------------------------------- Últimos (portada) */
   function ultimos(raiz, items) {
     const n = Number(raiz.dataset.cantidad || 6);
-    const material = items.filter((it) => !["avisos", "calendario", "provincia-web"].includes(it.seccion));
+    const material = items.filter((it) => !["avisos", "calendario", "provincia-web", "grupos", "elenco", "novedades"].includes(it.seccion));
     const lista = material.filter((it) => it.url || it.texto).slice(0, n);
     raiz.innerHTML = "";
     (lista.length ? lista : material.slice(0, n)).forEach((it, i) => raiz.append(tarjeta(it, i)));
@@ -536,6 +579,53 @@
 
 
 
+
+  /* ------------------------------------------------------ Grupos (3C) */
+  function grupos(raiz, items) {
+    const tipo = raiz.dataset.grupos;
+    const lista = items.filter((it) => it.seccion === "grupos" && (!tipo || it.etiquetas.includes(tipo)));
+    const cursos = [...new Set(lista.map(cursoItem).filter(Boolean))].sort().reverse();
+    let curso = cursoInicial(cursos);
+    function pintar() {
+      const l = lista.filter((g) => curso === "*" || !g.curso || g.curso === curso).sort((a, b) => a.titulo.localeCompare(b.titulo, "es", { numeric: true }));
+      const tarjetas = l.map((g, i) => {
+        const miembros = g.texto.split(/\n+/).map((x) => x.trim()).filter(Boolean);
+        return `<article class="grupo-tarjeta revelar${miembros.length ? "" : " sin-miembros"}" style="--d:${Math.min(i, 6) * 0.06}s">
+          <header><h3>${esc(g.titulo)}</h3>${g.descripcion ? `<span class="grupo-hora">${I.reloj} ${esc(g.descripcion)}</span>` : ""}</header>
+          ${miembros.length ? `<ul class="grupo-miembros">${miembros.map((m) => `<li><span class="inicial">${esc(m.charAt(0))}</span>${esc(m)}</li>`).join("")}</ul>` : ""}
+          <footer>${g.lugar ? `<span>Acompaña: <b>${esc(g.lugar)}</b></span>` : ""}${miembros.length ? `<span class="grupo-cuenta">${miembros.length} personas</span>` : ""}${curso === "*" && g.curso ? `<span class="grupo-cuenta">Curso ${esc(g.curso)}</span>` : ""}</footer>
+        </article>`;
+      }).join("");
+      raiz.innerHTML = (cursos.length > 1 || (cursos[0] && cursos[0] !== CURSO_ACTUAL) ? `<div class="barra-curso">${selectorCurso(cursos, curso)}</div>` : "")
+        + (l.length ? `<div class="grupos-rejilla">${tarjetas}</div>` : `<div class="vacio"><div class="hexvacio"></div><p>Todavía no hay grupos para este curso.</p></div>`);
+      const sel = $(".selector-curso select", raiz);
+      if (sel) sel.addEventListener("change", () => { curso = sel.value; pintar(); });
+      revelar(raiz);
+    }
+    pintar();
+  }
+
+  /* ------------------------------------------------------ Elenco (3B) */
+  function elenco(raiz, items) {
+    const l = items.filter((it) => it.seccion === "elenco").sort((a, b) => a.titulo.localeCompare(b.titulo, "es"));
+    if (!l.length) {
+      raiz.innerHTML = `<div class="vacio"><div class="hexvacio"></div><p>Muy pronto subiremos aquí las fotos de cada miembro del centro.</p></div>`;
+      return;
+    }
+    raiz.innerHTML = l.map((p, i) => `
+      <figure class="persona-elenco revelar" style="--d:${Math.min(i, 8) * 0.05}s">
+        <button class="pe-foto" type="button" ${p.url ? `data-video="${i}" aria-label="Ver el vídeo de ${esc(p.titulo)}"` : "disabled"}>
+          ${p.imagen ? `<img src="${esc(p.imagen)}" alt="${esc(p.titulo)}" loading="lazy">` : `<span>${esc(p.titulo.charAt(0))}</span>`}
+          ${p.url ? `<i class="pe-play">${I.video}</i>` : ""}
+        </button>
+        <figcaption><b>${esc(p.titulo)}</b>${p.descripcion ? `<small>${esc(p.descripcion)}</small>` : ""}</figcaption>
+      </figure>`).join("");
+    raiz.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-video]");
+      if (b) { const p = l[+b.dataset.video]; abrir({ ...p, tipo: "video" }); }
+    });
+    revelar(raiz);
+  }
 
   /* --------------------------------------------- Reproductor del himno */
   function reproductor(raiz) {
@@ -642,9 +732,12 @@
   const ssGet = (k) => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
   const ssSet = (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} };
 
+  const hace = (dias) => { const d = new Date(HOY + "T12:00:00"); d.setDate(d.getDate() - dias); return d.toISOString().slice(0, 10); };
+  const dentroDe = (dias) => { const d = new Date(HOY + "T12:00:00"); d.setDate(d.getDate() + dias); return d.toISOString().slice(0, 10); };
+
   function avisos(items) {
     const todos = items.filter((it) => it.seccion === "avisos");
-    const vigente = (it) => !it.caduca || it.caduca >= HOY;
+    const vigente = (it) => (it.caduca ? it.caduca >= HOY : (it.fecha || HOY) >= hace(30));
     const orden = (a, b) => (b.destacado - a.destacado) || (b.fecha || "").localeCompare(a.fecha || "");
     return {
       activos: todos.filter(vigente).sort(orden),
@@ -654,29 +747,85 @@
 
   function avisoHTML(it, i = 0) {
     const d = new Date((it.fecha || HOY) + "T12:00:00");
-    const cuerpo = (it.texto || it.descripcion || "").split(/\n\s*\n/).filter(Boolean)
-      .map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("");
+    const cuerpo = parrafos(it.texto || it.descripcion || "");
+    const esImg = (u) => /\.(jpe?g|png|webp|gif)($|\?)|drive\.google\.com\/thumbnail/i.test(u || "");
+    const cartel = it.imagen || (esImg(it.url) ? it.url : "");
     const caduca = it.caduca ? new Date(it.caduca + "T12:00:00") : null;
     return `
-      <article class="aviso-item${it.destacado ? " importante" : ""} revelar" style="--d:${Math.min(i, 6) * 0.06}s">
+      <article class="aviso-item${it.destacado ? " importante" : ""}${cartel ? " con-cartel" : ""} revelar" style="--d:${Math.min(i, 6) * 0.06}s">
         <div class="aviso-fecha"><b>${d.getDate()}</b><small>${MESES[d.getMonth()]}</small></div>
         <div class="aviso-cuerpo">
           ${it.destacado ? '<span class="aviso-badge">Importante</span>' : ""}
           <h3>${esc(it.titulo)}</h3>
           ${cuerpo}
           <div class="aviso-pie">
-            ${it.url ? `<a class="btn btn--sm" href="${esc(it.url)}" target="_blank" rel="noopener">${/\.(jpe?g|png|webp|gif)($|\?)/i.test(it.url) ? "Ver cartel" : "Más información"} ${I.flechaDiag}</a>` : ""}
+            ${it.url && !esImg(it.url) ? `<a class="btn btn--sm" href="${esc(it.url)}" target="_blank" rel="noopener">${/forms|formulario|inscri/i.test(it.url + it.titulo) ? "Inscribirme" : "Más información"} ${I.flechaDiag}</a>` : ""}
+            ${cartel ? `<a class="btn btn--sm btn--linea" href="${esc(cartel)}" target="_blank" rel="noopener">Ver cartel</a>` : ""}
             ${caduca && !isNaN(caduca) ? `<span class="aviso-caduca">${it.caduca < HOY ? "Finalizó" : "Hasta"} el ${caduca.getDate()} de ${caduca.toLocaleDateString("es-ES", { month: "long" })}</span>` : ""}
           </div>
         </div>
+        ${cartel ? `<a class="aviso-cartel" href="${esc(cartel)}" target="_blank" rel="noopener" aria-label="Ver cartel"><img src="${esc(cartel)}" alt="Cartel: ${esc(it.titulo)}" loading="lazy"></a>` : ""}
       </article>`;
+  }
+
+  /* Novedades: lo que se ha subido a la web en el último mes */
+  const DONDE = { temas: ["Material · Temas", "temas.html"], oraciones: ["Material · Oraciones", "oraciones.html"],
+    documentos: ["Material · Documentos del centro", "documentos.html"], provincia: ["Provincia · Comunicados", "provincia.html"],
+    "provincia-web": ["Provincia", "provincia.html"], elenco: ["Quiénes somos · Centro", "centro.html"], novedades: ["Novedad en la web", ""] };
+  function novedades(items) {
+    const l = items.filter((it) => DONDE[it.seccion] && it.fecha && (it.url || it.texto) && !/\(ejemplo\)/i.test(it.titulo))
+      .sort((a, b) => b.fecha.localeCompare(a.fecha));
+    return { recientes: l.filter((it) => it.fecha >= hace(30) && it.fecha <= HOY), pasadas: l.filter((it) => it.fecha < hace(30) && it.fecha >= hace(180)) };
+  }
+  function novedadHTML(it, i = 0) {
+    const [donde, pag] = DONDE[it.seccion];
+    const d = new Date(it.fecha + "T12:00:00");
+    const destino = it.seccion === "novedades" ? it.url : pag;
+    return `<a class="novedad revelar" href="${esc(destino || "#")}" style="--d:${Math.min(i, 6) * 0.05}s">
+      <span class="nov-ico">${I.flechaDiag}</span>
+      <span class="nov-txt"><small>${esc(donde)} · ${d.getDate()} ${MESES[d.getMonth()]}</small><b>${esc(it.titulo)}</b>${it.descripcion ? `<span>${esc(it.descripcion)}</span>` : ""}</span>
+    </a>`;
   }
 
   function paginaAvisos(raiz, items) {
     const { activos, pasados } = avisos(items);
+    const ev = filtrarAmbitos(eventos(items));
+    const proximos = ev.filter((e) => finEvento(e) >= HOY && e.fecha <= dentroDe(30));
+    const evPasados = ev.filter((e) => finEvento(e) < HOY && e.fecha >= hace(365)).reverse();
+    const nov = novedades(items);
+    const vacio = (t) => `<div class="vacio"><div class="hexvacio"></div><p>${t}</p></div>`;
+    const bloques = [
+      { k: "avisos", t: "Avisos", n: activos.length, html: activos.length ? `<div class="avisos-lista">${activos.map(avisoHTML).join("")}</div>` : vacio("No hay avisos en este momento.") },
+      { k: "encuentros", t: "Próximos encuentros", n: proximos.length, html: (proximos.length ? `<div class="agenda">${proximos.map(eventoHTML).join("")}</div>` : vacio("No hay encuentros en los próximos 30 días.")) + `<p class="tablon-mas"><a class="btn btn--linea btn--sm" href="calendario.html">Ver el calendario completo</a></p>` },
+      { k: "novedades", t: "Novedades en la web", n: nov.recientes.length, html: nov.recientes.length ? `<div class="novedades">${nov.recientes.map(novedadHTML).join("")}</div>` : vacio("Nada nuevo en el último mes.") }
+    ];
+    // Anteriores agrupados por mes
+    const ant = [
+      ...pasados.map((x) => ({ k: "avisos", f: x.caduca || x.fecha, h: avisoHTML(x) })),
+      ...evPasados.map((x) => ({ k: "encuentros", f: x.fecha, h: eventoHTML(x) })),
+      ...nov.pasadas.map((x) => ({ k: "novedades", f: x.fecha, h: novedadHTML(x) }))
+    ].sort((a, b) => b.f.localeCompare(a.f));
+    const NOMBRES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const porMes = {};
+    ant.forEach((x) => (porMes[x.f.slice(0, 7)] = porMes[x.f.slice(0, 7)] || []).push(x));
+
     raiz.innerHTML = `
-      <div class="avisos-lista">${activos.length ? activos.map(avisoHTML).join("") : '<div class="vacio"><div class="hexvacio"></div><p>No hay avisos en este momento.</p></div>'}</div>
-      ${pasados.length ? `<details class="avisos-pasados"><summary>Avisos anteriores <span class="cuenta">${pasados.length}</span></summary><div class="avisos-lista">${pasados.map(avisoHTML).join("")}</div></details>` : ""}`;
+      <div class="filtros tablon-filtros" role="group" aria-label="Qué mostrar">
+        <button class="chip" aria-pressed="true" data-k="">Todo</button>
+        ${bloques.map((b) => `<button class="chip" aria-pressed="false" data-k="${b.k}">${b.t} <span class="cuenta">${b.n}</span></button>`).join("")}
+      </div>
+      ${bloques.map((b) => `<section class="tablon-bloque" data-k="${b.k}"><h3 class="tablon-titulo">${b.t}</h3>${b.html}</section>`).join("")}
+      ${ant.length ? `<details class="avisos-pasados"><summary>Fechas anteriores <span class="cuenta">${ant.length}</span></summary>
+        ${Object.entries(porMes).map(([m, l]) => `<div class="ant-mes"><h4>${NOMBRES[+m.slice(5) - 1]} ${m.slice(0, 4)}</h4>${l.map((x) => `<div class="ant-item" data-k="${x.k}">${x.h}</div>`).join("")}</div>`).join("")}
+      </details>` : ""}`;
+    $(".tablon-filtros", raiz).addEventListener("click", (e) => {
+      const c = e.target.closest(".chip"); if (!c) return;
+      $$(".tablon-filtros .chip", raiz).forEach((x) => x.setAttribute("aria-pressed", String(x === c)));
+      const k = c.dataset.k;
+      $$(".tablon-bloque", raiz).forEach((b) => (b.hidden = k && b.dataset.k !== k));
+      $$(".ant-item", raiz).forEach((b) => (b.hidden = k && b.dataset.k !== k));
+      $$(".ant-mes", raiz).forEach((m) => (m.hidden = !$$(".ant-item:not([hidden])", m).length));
+    });
     // marca los avisos como vistos
     const ultimo = activos.map((a) => a.fecha).sort().pop();
     if (ultimo) lsSet("sscc-avisos-visto", ultimo);
@@ -705,7 +854,7 @@
 
   function toastAviso(items) {
     if (PAGINA === "avisos") return;
-    const it = avisos(items).activos.find((a) => a.destacado);
+    const it = avisos(items).activos.find((a) => a.emergente);
     if (!it) return;
     const clave = "sscc-toast-" + it.titulo;
     if (ssGet(clave)) return;
@@ -714,7 +863,7 @@
     t.setAttribute("role", "status");
     t.innerHTML = `
       <span class="toast-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></span>
-      <div><small>Aviso importante</small><b>${esc(it.titulo)}</b><a href="avisos.html">Ver aviso →</a></div>
+      <div><small>${it.destacado ? "Aviso importante" : "Aviso"}</small><b>${esc(it.titulo)}</b><a href="avisos.html">Ver aviso →</a></div>
       <button class="toast-cerrar" aria-label="Cerrar aviso">${I.cerrar}</button>`;
     document.body.append(t);
     setTimeout(() => t.classList.add("visible"), 1200);
@@ -737,13 +886,13 @@
   function enlaceGoogleCal(e) {
     const f = e.fecha.replace(/-/g, "");
     let fechas;
-    if (/^\d{1,2}:\d{2}$/.test(e.hora)) {
+    if (/^\d{1,2}:\d{2}$/.test(e.hora) && !e.fin) {
       const [h, m] = e.hora.split(":").map(Number);
       const ini = `${f}T${String(h).padStart(2, "0")}${String(m).padStart(2, "0")}00`;
       const fin = `${f}T${String(Math.min(h + 2, 23)).padStart(2, "0")}${String(m).padStart(2, "0")}00`;
       fechas = `${ini}/${fin}`;
     } else {
-      const d = new Date(e.fecha + "T12:00:00"); d.setDate(d.getDate() + 1);
+      const d = new Date(finEvento(e) + "T12:00:00"); d.setDate(d.getDate() + 1);
       fechas = `${f}/${d.toISOString().slice(0, 10).replace(/-/g, "")}`;
     }
     const q = new URLSearchParams({ action: "TEMPLATE", text: e.titulo, dates: fechas, details: e.descripcion || e.texto || "", location: e.lugar || "", ctz: "Europe/Madrid" });
@@ -760,7 +909,7 @@
       svg: '<path d="m3 20 6-10 4 6 3-4 5 8z"/><circle cx="17" cy="6" r="2"/>' },
     { k: "navidad", re: /navidad|noche ?buena|reyes/i, nombre: "Navidad", color: "#d0533f",
       svg: '<path d="m12 3 2.2 4.6 5 .7-3.6 3.5.9 5L12 14.4 7.5 16.8l.9-5L4.8 8.3l5-.7z"/>' },
-    { k: "convivencia", re: /convivencia|encuentro de centro|fiesta|merienda/i, nombre: "Convivencia", color: "#e8590c",
+    { k: "convivencia", re: /convivencia|encuentro de centro|fiesta|merienda/i, nombre: "Convivencia", color: "#d6336c",
       svg: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>' },
     { k: "aspirantes", re: /aspirante/i, nombre: "Aspirantes", color: "#0da2dc",
       svg: '<path d="M12 21v-9"/><path d="M12 12c0-4 3-7 7-7 0 4-3 7-7 7z"/><path d="M12 14c0-3-2.5-5.5-6-5.5 0 3 2.5 5.5 6 5.5z"/>' },
@@ -768,21 +917,43 @@
       svg: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.3a4.5 4.5 0 0 1 5.5 4.7"/>' }
   ];
   const OTRO_EVENTO = { k: "otro", nombre: "Otro encuentro", color: "#34546d", svg: '<circle cx="12" cy="12" r="4"/>' };
-  const tipoEvento = (e) => TIPOS_EVENTO.find((t) => t.re.test(e.titulo + " " + (e.descripcion || ""))) || OTRO_EVENTO;
+  const AMBITOS = {
+    centro: { k: "centro", nombre: "Centro Nervión", color: "#006a92", svg: '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/>' },
+    provincia: { k: "provincia", nombre: "Provincia", color: "#7a4fa3", svg: '<path d="M12 2.5 20.5 7.3v9.4L12 21.5l-8.5-4.8V7.3z"/><path d="M12 8.5 15 10.2v3.6L12 15.5l-3-1.7v-3.6z"/>' },
+    region: { k: "region", nombre: "Región Ibérica", color: "#e8590c", svg: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>' }
+  };
+  const tipoEvento = (e) => e.ambito === "provincia" ? AMBITOS.provincia : e.ambito === "region" ? AMBITOS.region
+    : TIPOS_EVENTO.find((t) => t.re.test(e.titulo + " " + (e.descripcion || ""))) || OTRO_EVENTO;
+
+  // Qué ámbitos quiere ver cada persona (se recuerda en su navegador)
+  const ambitosVisibles = () => { try { const v = JSON.parse(localStorage.getItem("sscc-ambitos")); if (Array.isArray(v) && v.length) return v; } catch (e) {} return ["centro", "provincia", "region"]; };
+  const filtrarAmbitos = (l) => { const v = ambitosVisibles(); return l.filter((e) => v.includes(e.ambito || "centro")); };
+  const finEvento = (e) => e.fin || e.fecha;
+  function diasEntre(a, b) {
+    const r = []; const d = new Date(a + "T12:00:00"), f = new Date((b || a) + "T12:00:00");
+    while (d <= f && r.length < 60) { r.push(d.toISOString().slice(0, 10)); d.setDate(d.getDate() + 1); }
+    return r;
+  }
+  function textoRango(e) {
+    if (!e.fin || e.fin === e.fecha) return null;
+    const a = new Date(e.fecha + "T12:00:00"), b = new Date(e.fin + "T12:00:00");
+    return a.getMonth() === b.getMonth() ? { b: `${a.getDate()}-${b.getDate()}`, s: MESES[a.getMonth()] } : { b: `${a.getDate()}-${b.getDate()}`, s: `${MESES[a.getMonth()]}-${MESES[b.getMonth()]}` };
+  }
   const simbolo = (t, extra = "") => `<span class="simb ${extra}" style="--c:${t.color}" title="${esc(t.nombre)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${t.svg}</svg></span>`;
 
   function eventoHTML(e, i = 0) {
     const d = new Date(e.fecha + "T12:00:00");
     const t = tipoEvento(e);
-    return `<div class="evento revelar" style="--d:${Math.min(i, 6) * 0.06}s; --c:${t.color}">
-      <div class="dia"><b>${d.getDate()}</b><small>${MESES[d.getMonth()]}</small></div>
+    const r = textoRango(e);
+    return `<div class="evento revelar${r ? " rango" : ""}" data-ambito="${e.ambito || "centro"}" style="--d:${Math.min(i, 6) * 0.06}s; --c:${t.color}">
+      <div class="dia"><b>${r ? r.b : d.getDate()}</b><small>${r ? r.s : MESES[d.getMonth()]}</small></div>
       <div><span class="evento-tipo">${simbolo(t, "mini")} ${esc(t.nombre)}</span><h3>${esc(e.titulo)}</h3><p>${esc([e.lugar, e.descripcion].filter(Boolean).join(" · "))}</p>
         <a class="anadir-cal" href="${enlaceGoogleCal(e)}" target="_blank" rel="noopener">+ Añadir a mi calendario</a></div>
       <span class="hora">${esc(e.hora || "")}</span></div>`;
   }
 
   function agenda(raiz, items) {
-    const ev = eventos(items).filter((e) => e.fecha >= HOY).slice(0, Number(raiz.dataset.cantidad || 4));
+    const ev = filtrarAmbitos(eventos(items)).filter((e) => finEvento(e) >= HOY).slice(0, Number(raiz.dataset.cantidad || 4));
     raiz.innerHTML = ev.length ? ev.map(eventoHTML).join("")
       : `<div class="vacio"><div class="hexvacio"></div><p>No hay encuentros programados.</p></div>`;
     revelar(raiz);
@@ -794,8 +965,9 @@
       raiz.innerHTML = `<iframe class="calendario-google" src="${src}" title="Calendario del centro" loading="lazy"></iframe>`;
       return;
     }
-    const lista = eventos(items);
-    const porDia = lista.reduce((m, e) => ((m[e.fecha] = m[e.fecha] || []).push(e), m), {});
+    const lista = filtrarAmbitos(eventos(items));
+    const porDia = {};
+    lista.forEach((e) => diasEntre(e.fecha, e.fin).forEach((f) => (porDia[f] = porDia[f] || []).push(e)));
     const hoy = new Date(HOY + "T12:00:00");
     let anio = hoy.getFullYear(), mes = hoy.getMonth(), sel = null;
     const NOMBRES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -826,9 +998,9 @@
         t = d.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
       } else {
         const pref = iso(anio, mes, 1).slice(0, 7);
-        ev = lista.filter((e) => e.fecha.startsWith(pref));
+        ev = lista.filter((e) => e.fecha.startsWith(pref) || finEvento(e).startsWith(pref));
         t = `${NOMBRES[mes]} ${anio}`;
-        if (!ev.length) { ev = lista.filter((e) => e.fecha >= HOY).slice(0, 4); t = "Próximos encuentros"; }
+        if (!ev.length) { ev = lista.filter((e) => finEvento(e) >= HOY).slice(0, 4); t = "Próximos encuentros"; }
       }
       ladoT.textContent = t;
       ladoL.innerHTML = ev.length ? ev.map(eventoHTML).join("") : `<div class="vacio"><div class="hexvacio"></div><p>Ningún encuentro este día.</p></div>`;
@@ -872,15 +1044,25 @@
 
   /* ------------------------------------- Suscripción al calendario (.ics) */
   function suscripcion(raiz) {
-    const https = location.origin + "/calendario.ics";
-    const webcal = https.replace(/^https?:/, "webcal:");
+    let https = "";
     const nombre = "SSCC " + (CFG.centro || "Nervión");
-    const enlaces = {
-      google: "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(webcal),
-      apple: webcal,
-      outlook: "https://outlook.live.com/calendar/0/addfromweb?url=" + encodeURIComponent(https) + "&name=" + encodeURIComponent(nombre)
-    };
-    $$("[data-sus]", raiz).forEach((b) => { if (enlaces[b.dataset.sus]) b.href = enlaces[b.dataset.sus]; });
+    function actualizar() {
+      const elegidos = $$(".sus-ambitos input:checked", raiz).map((c) => c.value);
+      const todos = $$(".sus-ambitos input", raiz).length;
+      https = location.origin + "/calendario.ics" + (elegidos.length && elegidos.length < todos ? "?ambitos=" + elegidos.join(",") : "");
+      const webcal = https.replace(/^https?:/, "webcal:");
+      const enlaces = {
+        google: "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(webcal),
+        apple: webcal,
+        outlook: "https://outlook.live.com/calendar/0/addfromweb?url=" + encodeURIComponent(https) + "&name=" + encodeURIComponent(nombre)
+      };
+      $$("[data-sus]", raiz).forEach((b) => { if (enlaces[b.dataset.sus]) b.href = enlaces[b.dataset.sus]; });
+    }
+    $$(".sus-ambitos input", raiz).forEach((c) => c.addEventListener("change", () => {
+      if (!$$(".sus-ambitos input:checked", raiz).length) c.checked = true;
+      actualizar();
+    }));
+    actualizar();
     const copiar = $('[data-sus="copiar"]', raiz);
     copiar.addEventListener("click", async () => {
       const txt = $(".sus-copiado", copiar);
@@ -890,10 +1072,30 @@
     });
   }
 
+  /* ------------------------------ Filtro Centro · Provincia · Región */
+  function barraAmbitos(raiz, items) {
+    const pintar = () => {
+      const v = ambitosVisibles();
+      raiz.innerHTML = `<span class="ba-tit">Ver fechas de</span>` + Object.values(AMBITOS).map((a) => `
+        <button class="chip-ambito${v.includes(a.k) ? " activo" : ""}" type="button" data-amb="${a.k}" aria-pressed="${v.includes(a.k)}" style="--c:${a.color}">${simbolo(a, "mini")} ${esc(a.nombre)}</button>`).join("");
+    };
+    pintar();
+    raiz.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-amb]"); if (!b) return;
+      let v = ambitosVisibles();
+      v = v.includes(b.dataset.amb) ? v.filter((x) => x !== b.dataset.amb) : [...v, b.dataset.amb];
+      if (!v.length) v = [b.dataset.amb];
+      try { localStorage.setItem("sscc-ambitos", JSON.stringify(v)); } catch (err) {}
+      pintar();
+      // vuelve a dibujar el calendario y la lista con el nuevo filtro
+      [["[data-calendario]", calendario], ["[data-proximos]", proximos]].forEach(([sel, fn]) => $$(sel).forEach((r) => { const n = r.cloneNode(false); n.classList.add("visible"); r.replaceWith(n); fn(n, items); }));
+    });
+  }
+
   /* --------------------------------------- Próximos encuentros (lista) */
   function proximos(raiz, items) {
     const N = Number(raiz.dataset.cantidad || 12);
-    const ev = eventos(items).filter((e) => e.fecha >= HOY);
+    const ev = filtrarAmbitos(eventos(items)).filter((e) => finEvento(e) >= HOY);
     if (!ev.length) { raiz.innerHTML = `<div class="vacio"><div class="hexvacio"></div><p>No hay encuentros programados.</p></div>`; return; }
     const NOMBRES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
     let mostrados = N;
@@ -1145,8 +1347,11 @@
     $$("[data-avisos]").forEach((r) => paginaAvisos(r, items));
     $$("[data-categorias-docs]").forEach((r) => categoriasDocs(r, items));
     $$("[data-enlaces-provincia]").forEach((r) => enlacesProvincia(r, items));
+    $$("[data-grupos]").forEach((r) => grupos(r, items));
+    $$("[data-elenco]").forEach((r) => elenco(r, items));
     $$("[data-avisos-inicio]").forEach((r) => avisosInicio(r, items));
     $$("[data-agenda]").forEach((r) => agenda(r, items));
+    $$("[data-ambitos]").forEach((r) => barraAmbitos(r, items));
     $$("[data-calendario]").forEach((r) => calendario(r, items));
     $$("[data-proximos]").forEach((r) => proximos(r, items));
     puntoAvisos(items);

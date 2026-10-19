@@ -6,13 +6,15 @@
 
    Campos:
      seccion     → "temas" | "oraciones" | "provincia" | "documentos" | "avisos" | "calendario"
+                   | "grupos" | "elenco" | "novedades" | "provincia-web"
      titulo      → texto corto
      descripcion → una o dos frases
      tipo        → "pdf" | "video" | "audio" | "presentacion" | "documento"
                    | "carpeta" | "enlace" | "texto"
      url         → enlace de Google Drive, YouTube, Docs... o ruta local
      fecha       → "AAAA-MM-DD"
-     curso       → "2026-27"
+     curso       → "2026-27"  (sin curso = permanente: se ve siempre; con curso, los
+                   anteriores quedan como histórico y se consultan con el selector)
      etiquetas   → ["Formación", "Adviento"...]
      destacado   → true para mostrarlo grande arriba
      texto       → (solo tipo "texto" y avisos) el contenido completo; separa párrafos con \n\n
@@ -27,10 +29,13 @@
    "Proyecto de centro", "Actas" o "Memoria".
 
    CALENDARIO: usa seccion "calendario" con fecha, hora ("18:00"), lugar y
-   descripcion. Aparecen en el calendario y en «Próximos encuentros».
+   descripcion. fin: "AAAA-MM-DD" para eventos de varios días.
+   ambito: "centro" (por defecto) | "provincia" | "region". Aparecen en el calendario y en «Próximos encuentros».
 
-   AVISOS: usa seccion "avisos". Con destacado: true sale como «Importante»,
-   aparece primero y se muestra una notificación al entrar en la web.
+   AVISOS: usa seccion "avisos". Con destacado: true sale como «Importante» y
+   aparece primero; con emergente: true sale además como ventana emergente.
+   imagen: cartel del aviso · url: enlace (p. ej. formulario de inscripción).
+   Sin «caduca», el aviso pasa a «Fechas anteriores» al mes de su fecha.
    ========================================================================= */
 window.SSCC_CONTENIDO = [
   /* ---------------------- WEB DE LA PROVINCIA ---------------------- */
@@ -104,6 +109,8 @@ window.SSCC_CONTENIDO = [
   { seccion: "calendario", titulo: "Aspirantes (May)", fecha: "2026-11-16", hora: "19:00", curso: "2026-27" },
   { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-16", hora: "19:15", curso: "2026-27" },
   { seccion: "calendario", titulo: "Aspirantes (Antonio)", fecha: "2026-11-20", hora: "17:00", curso: "2026-27" },
+  { seccion: "calendario", ambito: "provincia", titulo: "Encuentros Pinardi", fecha: "2026-11-21", fin: "2026-11-22", lugar: "Casa de Espiritualidad «El Pilar», Sanlúcar la Mayor", curso: "2026-27", descripcion: "Tres encuentros en uno: aspirantes, coordinadores y todos los SSCC. Inscripción hasta el 8 de noviembre." },
+  { seccion: "calendario", ambito: "provincia", titulo: "Fin del plazo de inscripción a Pinardi", fecha: "2026-11-08", curso: "2026-27" },
   { seccion: "calendario", titulo: "Aspirantes (Esther)", fecha: "2026-11-22", hora: "18:00", curso: "2026-27" },
   { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-22", hora: "18:30", curso: "2026-27" },
   { seccion: "calendario", titulo: "Grupo referencia", fecha: "2026-11-23", hora: "18:00", curso: "2026-27" },
@@ -126,7 +133,67 @@ window.SSCC_CONTENIDO = [
   { seccion: "calendario", titulo: "Nochebuena", fecha: "2026-12-24", curso: "2026-27" },
   { seccion: "calendario", titulo: "Navidad", fecha: "2026-12-25", curso: "2026-27" },
 
+  /* ------------------- CALENDARIO: PROVINCIA Y REGIÓN ------------------- */
+  // Del «Calendario de eventos 2026-2027» de la Provincia y del calendario del Consejo Provincial y la Región.
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Primera toma de contacto", "fecha": "2026-08-26", "lugar": "Online", "descripcion": "Reunión del Consejo Provincial para iniciar el curso 2026-27.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Presentación del Lema 2026-27", "fecha": "2026-08-28", "lugar": "Correo y redes", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Envío de la Propuesta de Formación 2026-27", "fecha": "2026-08-29", "lugar": "Correo y redes", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Envío del Proyecto Anual 2026-27", "fecha": "2026-08-29", "lugar": "Correo y redes", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Ejercicios Espirituales de Discernimiento", "fecha": "2026-09-04", "fin": "2026-09-06", "lugar": "Canarias", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Reuniones online con los Consejos Locales", "fecha": "2026-09-09", "fin": "2026-09-10", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Seguimiento mensual", "fecha": "2026-09-16", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Recepción de expedientes de Promesas para Canarias", "fecha": "2026-09-29", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Ejercicios Espirituales de Discernimiento", "fecha": "2026-10-02", "fin": "2026-10-04", "lugar": "Córdoba", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejos Locales FASA", "fecha": "2026-10-03", "lugar": "Sevilla", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Consulta Regional", "fecha": "2026-10-03", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Seguimiento mensual", "fecha": "2026-10-07", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Musical Getsemaní (ensayo)", "fecha": "2026-10-11", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "XXXVII Encuentro Canario", "fecha": "2026-10-24", "lugar": "Canarias", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Preparación de Promesas", "fecha": "2026-11-04", "lugar": "Online", "descripcion": "Aprobación de expedientes de promesas.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Congreso Regional", "fecha": "2026-11-07", "fin": "2026-11-08", "lugar": "El Escorial", "descripcion": "Encuentro que reúne a los consejos provinciales de toda la Región.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Musical Getsemaní", "fecha": "2026-11-28", "lugar": "Puertollano", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Recepción de expedientes de Promesas para los Encuentros de Zona", "fecha": "2026-11-29", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Pleno", "fecha": "2026-12-18", "fin": "2026-12-20", "lugar": "Málaga", "descripcion": "Aprobación de expedientes de promesas y revisión del primer trimestre.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Encuentro de Zona · Extremadura", "fecha": "2027-01-09", "lugar": "Extremadura", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Escuela de Dinamizadores", "fecha": "2027-01-09", "fin": "2027-01-10", "lugar": "Madrid", "descripcion": "Formación y liderazgo de los animadores de centros.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Gestión", "fecha": "2027-01-13", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Encuentro de Zona · Huelva-Sevilla", "fecha": "2027-01-16", "lugar": "Huelva-Sevilla", "descripcion": "Nuestra zona.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Encuentro de Zona · Cádiz", "fecha": "2027-01-17", "lugar": "Cádiz", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Proyecto SOLERA y Jornadas de Espiritualidad de la FASA", "fecha": "2027-01-18", "fin": "2027-01-25", "lugar": "Turín", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Corazones Arremangados", "fecha": "2027-01-23", "lugar": "Online", "descripcion": "Servicio y acción social.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Tras las huellas de Don Bosco", "fecha": "2027-02-05", "fin": "2027-02-07", "lugar": "Barcelona", "descripcion": "Encuentro formativo sobre el carisma salesiano.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Encuentro de Zona · Córdoba", "fecha": "2027-02-13", "lugar": "Córdoba", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Encuentro de Zona · Jaén", "fecha": "2027-02-13", "lugar": "Jaén", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Encuentro de Zona · Granada-Málaga", "fecha": "2027-02-14", "lugar": "Granada-Málaga", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Gestión", "fecha": "2027-02-17", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Ejercicios Espirituales · Extremadura", "fecha": "2027-02-19", "fin": "2027-02-21", "lugar": "Villagonzalo", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Ejercicios Espirituales y EE.EE. de Discernimiento", "fecha": "2027-02-26", "fin": "2027-02-28", "lugar": "Chipiona", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Musical Getsemaní", "fecha": "2027-02-27", "fin": "2027-02-28", "lugar": "León", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Musical Getsemaní (por confirmar)", "fecha": "2027-03-06", "lugar": "Córdoba", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Reunión", "fecha": "2027-03-10", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Consulta Regional", "fecha": "2027-03-15", "lugar": "Online", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Entrega de expedientes de Promesas para la Asamblea", "fecha": "2027-03-21", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Fin de la presentación de candidaturas al Consejo Provincial", "fecha": "2027-03-23", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Promesas", "fecha": "2027-04-07", "lugar": "Online", "descripcion": "Aprobación de expedientes de cara a la Asamblea Provincial.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Envío de la papeleta electoral a los Consejos Locales", "fecha": "2027-04-09", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Congreso y Asamblea Provincial", "fecha": "2027-04-23", "fin": "2027-04-25", "lugar": "Pilas", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Aquí estoy", "fecha": "2027-04-30", "fin": "2027-05-02", "lugar": "Oporto", "descripcion": "Encuentro internacional de jóvenes cooperadores de toda la Región.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Consulta Regional", "fecha": "2027-06-05", "lugar": "Madrid", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "provincia", "titulo": "Consejo Provincial · Relevo y programación", "fecha": "2027-07-02", "fin": "2027-07-04", "lugar": "Antequera", "descripcion": "Relevo de cargos y programación del próximo curso.", "curso": "2026-27"},
+  {"seccion": "calendario", "ambito": "region", "titulo": "Ejercicios Espirituales", "fecha": "2027-07-14", "fin": "2027-07-18", "lugar": "El Paular", "curso": "2026-27"},
+
   /* ---------------------------- AVISOS --------------------------- */
+  {
+    seccion: "avisos",
+    titulo: "Nos vemos en Pinardi · 21 y 22 de noviembre",
+    fecha: "2026-10-19",
+    caduca: "2026-11-08",
+    destacado: true,
+    emergente: true,
+    texto: "Encuentro provincial en la Casa de Espiritualidad «El Pilar» (Sanlúcar la Mayor) para aspirantes, coordinadores con administradores y secretarios, y todos los Salesianos Cooperadores. *Inscripción y pago hasta el 8 de noviembre.*",
+    url: "https://docs.google.com/forms/d/e/1FAIpQLSch8nPPChSLaKBMGfxXY0OtssD_XUNujXCfschZ7vxSjFqgOQ/viewform",
+    imagen: "material/provincia/encuentro-pinardi-2026.jpg"
+  },
   {
     seccion: "avisos",
     titulo: "¡Estrenamos web!",
@@ -139,6 +206,7 @@ window.SSCC_CONTENIDO = [
     fecha: "2026-10-18",
     caduca: "2026-10-25",
     destacado: true,
+    emergente: true,
     texto: "Este mes la Misa de María Auxiliadora no será el sábado 24: la celebramos el domingo 25 de octubre a las 19:30."
   },
   {
@@ -170,79 +238,26 @@ window.SSCC_CONTENIDO = [
     etiquetas: ["Formación", "Santidad"],
     destacado: true
   },
-  {
-    seccion: "temas",
-    titulo: "Proyecto de Vida Apostólica (ejemplo)",
-    descripcion: "Lectura comentada del PVA. Sustituye este ejemplo por el enlace de Drive del documento.",
-    tipo: "documento",
-    url: "",
-    fecha: "2026-09-20",
-    curso: "2026-27",
-    etiquetas: ["Formación", "PVA"]
-  },
-  {
-    seccion: "temas",
-    titulo: "Vídeo: el sueño de los nueve años (ejemplo)",
-    descripcion: "Material audiovisual para el encuentro. Pega aquí el enlace de YouTube o de Drive.",
-    tipo: "video",
-    url: "",
-    fecha: "2026-09-10",
-    curso: "2026-27",
-    etiquetas: ["Don Bosco"]
-  },
-  {
-    seccion: "temas",
-    titulo: "Presentación del curso (ejemplo)",
-    descripcion: "Diapositivas del primer encuentro del curso en Presentaciones de Google.",
-    tipo: "presentacion",
-    url: "",
-    fecha: "2026-09-05",
-    curso: "2026-27",
-    etiquetas: ["Curso"]
-  },
 
   /* -------------------------- ORACIONES -------------------------- */
-  {
-    seccion: "oraciones",
-    titulo: "Oración para comenzar el encuentro",
-    descripcion: "Una oración breve para abrir cada reunión del centro.",
-    tipo: "texto",
-    fecha: "2026-10-01",
-    curso: "2026-27",
-    etiquetas: ["Encuentros"],
-    destacado: true,
-    texto: "Señor Jesús, aquí estamos, reunidos en tu nombre como familia de Don Bosco.\n\nAbre nuestros oídos para escucharnos, nuestro corazón para acogernos y nuestras manos para servir a los jóvenes que nos confías.\n\nQue María Auxiliadora nos acompañe en este rato y nos enseñe a vivir con alegría lo que hoy compartimos.\n\nAmén."
-  },
-  {
-    seccion: "oraciones",
-    titulo: "Oración de envío",
-    descripcion: "Para terminar el encuentro y volver a la vida cotidiana.",
-    tipo: "texto",
-    fecha: "2026-10-01",
-    curso: "2026-27",
-    etiquetas: ["Encuentros"],
-    texto: "Gracias, Padre, por este tiempo compartido.\n\nEnvíanos a nuestras casas, trabajos y parroquias como sal y fermento, con el estilo sencillo y alegre de Don Bosco.\n\nQue sepamos ver tu rostro en cada joven y en cada persona que encontremos esta semana.\n\nAmén."
-  },
-  {
-    seccion: "oraciones",
-    titulo: "Oración de Adviento (ejemplo)",
-    descripcion: "Plantilla en PDF para la oración de los domingos de Adviento.",
-    tipo: "pdf",
-    url: "",
-    fecha: "2026-11-28",
-    curso: "2026-27",
-    etiquetas: ["Adviento"]
-  },
-  {
-    seccion: "oraciones",
-    titulo: "Canción para la oración (ejemplo)",
-    descripcion: "Audio o vídeo para acompañar un momento de silencio.",
-    tipo: "audio",
-    url: "",
-    fecha: "2026-10-05",
-    curso: "2026-27",
-    etiquetas: ["Música"]
-  },
+
+  /* ----------------------------- GRUPOS ---------------------------- */
+  // Del acta del encuentro de centro del 19 de septiembre de 2026.
+  // descripcion = día y hora · lugar = quién acompaña · texto = miembros (uno por línea)
+  {"seccion": "grupos", "titulo": "Grupo 1", "descripcion": "Lunes · 18:00 h", "lugar": "", "texto": "Angela Triviño\nEva\nCarolina\nMarian\nElisa\nCristina\nCharo", "etiquetas": ["Formación"], "curso": "2026-27", "fecha": "2026-09-19"},
+  {"seccion": "grupos", "titulo": "Grupo 2", "descripcion": "Lunes · 19:15 h", "lugar": "", "texto": "May\nLoli\nLidia\nAngela Carranza\nElena\nAntonio\nSusana\nEsther\nChari\nMª José", "etiquetas": ["Formación"], "curso": "2026-27", "fecha": "2026-09-19"},
+  {"seccion": "grupos", "titulo": "Grupo 3", "descripcion": "Domingo · 18:30 h", "lugar": "", "texto": "Sandra\nBlanca\nRocío\nIsa Santana\nLaura\nCarmen María", "etiquetas": ["Formación"], "curso": "2026-27", "fecha": "2026-09-19"},
+  {"seccion": "grupos", "titulo": "SSCC sin grupo asignado", "descripcion": "", "lugar": "", "texto": "Carmen Seda\nMariló\nAuxi\nMarina", "etiquetas": ["Formación"], "curso": "2026-27", "fecha": "2026-09-19"},
+  {"seccion": "grupos", "titulo": "Aspirantes · Grupo 1", "descripcion": "Jueves", "lugar": "May", "texto": "", "etiquetas": ["Aspirantes"], "curso": "2026-27", "fecha": "2026-09-19"},
+  {"seccion": "grupos", "titulo": "Aspirantes · Grupo 2", "descripcion": "Viernes · 17:00 h", "lugar": "Antonio / Cristina", "texto": "", "etiquetas": ["Aspirantes"], "curso": "2026-27", "fecha": "2026-09-19"},
+  {"seccion": "grupos", "titulo": "Aspirantes · Grupo 3", "descripcion": "Domingos · 18:00 h", "lugar": "Esther", "texto": "", "etiquetas": ["Aspirantes"], "curso": "2026-27", "fecha": "2026-09-19"},
+
+  /* ----------------------------- ELENCO ---------------------------- */
+  // Cada persona: { seccion: "elenco", titulo: "Nombre", descripcion: "Salesiana cooperadora desde 2015", imagen: "ruta o enlace de la foto", url: "vídeo (opcional)" }
+
+  /* --------------------------- NOVEDADES -------------------------- */
+  // Para anunciar en el tablón cambios de la web que no son material (nueva sección, Quiénes somos…)
+  { seccion: "novedades", titulo: "Nueva sección: Proyecto de Vida Apostólica (PVA)", descripcion: "Léelo con índice, descárgalo o recórrelo con los vídeos del PVA ¡vivo!", url: "pva.html", fecha: "2026-10-19" },
 
   /* ----------------------------- HIMNO ----------------------------- */
   {
@@ -276,22 +291,35 @@ window.SSCC_CONTENIDO = [
   /* -------------------------- PROVINCIA -------------------------- */
   {
     seccion: "provincia",
-    titulo: "Calendario provincial 2026-27 (ejemplo)",
-    descripcion: "Fechas de encuentros, retiros y Consulta del curso.",
-    tipo: "documento",
-    url: "",
-    fecha: "2026-09-01",
+    titulo: "Nos vemos en Pinardi · Encuentro provincial 21-22 de noviembre",
+    descripcion: "Comunicado del Consejo Provincial: tres encuentros en uno para aspirantes, coordinadores y todos los SSCC. Inscripción hasta el 8 de noviembre.",
+    tipo: "texto",
+    url: "https://docs.google.com/forms/d/e/1FAIpQLSch8nPPChSLaKBMGfxXY0OtssD_XUNujXCfschZ7vxSjFqgOQ/viewform",
+    imagen: "material/provincia/encuentro-pinardi-2026.jpg",
+    fecha: "2026-10-19",
+    curso: "2026-27",
+    etiquetas: ["Comunicado", "Encuentros"],
+    destacado: true,
+    texto: "En este año, en que somos impulsados a actuar como nos marca nuestro Proyecto de Vida Apostólica y nuestra fe, somos invitados a vivir la experiencia del *Encuentro Pinardi durante los días 21 y 22 de noviembre*. Este es un encuentro que hace realidad que somos una casa que acoge, como Pinardi, y que se llena de tres encuentros donde mostrar la grandeza de nuestra vocación. Estamos invitados a disfrutarlo: somos invitados tres grupos de hermanos para vivir este momento de Pinardi.\n\n- Quienes están en la *etapa de formación inicial, los/las ASPIRANTES*. Especialmente para quienes están en los primeros tres años del proceso como aspirantes a Salesianos Cooperadores.\n- Quienes *prestáis el servicio de COORDINACIÓN junto a los ADMINISTRADORES y/o SECRETARIOS*. Para profundizar en aspectos organizativos y de gestión dentro de la Asociación y de nuestra Provincia.\n- Quienes vivís la grandeza de nuestro carisma, es decir, *todos los Salesianos Cooperadores para disfrutar del centro de nuestra vocación: el encuentro personal y comunitario con Dios*.\n\nLo celebraremos en la *Casa de Espiritualidad de las Salesianas «El Pilar» en Sanlúcar la Mayor*.\n\nTodos *nos inscribiremos por medio del formulario que aparece capturando el QR* que hay en el cartel o en este enlace: https://docs.google.com/forms/d/e/1FAIpQLSch8nPPChSLaKBMGfxXY0OtssD_XUNujXCfschZ7vxSjFqgOQ/viewform\n\nRecuerda que el *plazo para inscribirse y formalizar el pago* se abre desde hoy *hasta el 8 de noviembre*.\n\n*Te esperamos para impulsarnos a actuar* y seguir creciendo como salesianos en el mundo."
+  },
+  {
+    seccion: "provincia",
+    titulo: "Calendario de eventos 2026-2027 de la Provincia",
+    descripcion: "Todas las fechas provinciales del curso. También están en el calendario de la web, con el símbolo morado.",
+    tipo: "imagen",
+    url: "material/calendario/calendario-provincia-2026-27.jpg",
+    fecha: "2026-10-19",
     curso: "2026-27",
     etiquetas: ["Calendario"]
   },
   {
     seccion: "provincia",
-    titulo: "Materiales de la Asamblea Provincial (ejemplo)",
-    descripcion: "Carpeta compartida de Drive con todos los documentos de la Asamblea.",
-    tipo: "carpeta",
-    url: "",
-    fecha: "2026-06-10",
-    curso: "2025-26",
-    etiquetas: ["Asamblea"]
+    titulo: "Calendario 2026-2027 del Consejo Provincial y de la Región",
+    descripcion: "Reuniones del Consejo Provincial y eventos de la Región Ibérica. En el calendario de la web, la Región lleva el símbolo naranja.",
+    tipo: "imagen",
+    url: "material/calendario/calendario-region-2026-27.jpg",
+    fecha: "2026-10-19",
+    curso: "2026-27",
+    etiquetas: ["Calendario"]
   }
 ];
