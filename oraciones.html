@@ -42,18 +42,41 @@
     <div class="contenedor">
       <span class="kicker">Oración</span>
       <h1>Oraciones del <span class="resalte">camino</span></h1>
-      <p>Para comenzar y terminar los encuentros, para los tiempos litúrgicos y para rezar en casa con el corazón de Don Bosco.</p>
+      <p>Oraciones para los encuentros y tiempos fuertes, y las que preparan los grupos para sus reuniones.</p>
     </div>
     <svg class="ola" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c240 40 480 40 720 10s480-50 720-10v40H0z"/></svg>
   </section>
 
   <section class="seccion">
     <div class="contenedor">
-      <div class="cabeza revelar">
-        <div><span class="kicker">Rezamos juntos</span><h2>Oraciones y recursos</h2></div>
+      <nav class="saltos revelar" aria-label="Apartados">
+        <a href="#encuentros">Encuentros y tiempos fuertes</a><a href="#grupos-oracion">Para los grupos</a><a href="#himno">Himno</a>
+      </nav>
+      <div class="cabeza revelar" id="encuentros">
+        <div><span class="kicker">Encuentros y tiempos fuertes</span><h2>Para rezar juntos como centro</h2></div>
         <a class="btn btn--linea" data-carpeta="oraciones" hidden target="_blank" rel="noopener">Abrir carpeta en Drive <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
       </div>
-      <div class="biblioteca" data-seccion="oraciones" data-nombre="oraciones" data-etiqueta-destacado="Oración destacada"></div>
+      <div class="biblioteca" data-seccion="oraciones" data-etiqueta="Encuentros y tiempos fuertes" data-nombre="oraciones" data-etiqueta-destacado="Oración destacada" data-vacio="Aún no hay oraciones para encuentros o tiempos fuertes."></div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--blanca" id="grupos-oracion">
+    <div class="contenedor">
+      <div class="cabeza revelar">
+        <div><span class="kicker">Para los grupos</span><h2>Oraciones de los grupos</h2></div>
+        <p>Más breves, para empezar o terminar la reunión de cada grupo. En cada una figura el grupo que la ha preparado.</p>
+      </div>
+      <div class="biblioteca" data-seccion="oraciones" data-etiqueta="Grupos" data-destacado="no" data-nombre="oraciones de grupo" data-vacio="Aún no hay oraciones de los grupos."></div>
+    </div>
+  </section>
+
+  <section class="seccion" id="himno">
+    <div class="contenedor">
+      <div class="cabeza revelar">
+        <div><span class="kicker">Nuestro himno</span><h2>Soñadores de vida</h2></div>
+        <a class="btn btn--linea" href="material.html#himno">Escucharlo en Material</a>
+      </div>
+      <div class="biblioteca" data-seccion="oraciones" data-etiqueta="Himno" data-destacado="no" data-nombre="himno"></div>
     </div>
   </section>
   <section class="seccion" style="padding-top:0">
