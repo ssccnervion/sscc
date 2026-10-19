@@ -1607,3 +1607,10 @@ body[data-pagina="panel"] .toast-aviso { display: none; }
 .sus-ambitos > span { font-weight: 800; color: var(--oro); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
 .sus-ambitos label { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: #fff; cursor: pointer; }
 .sus-ambitos input { width: 18px; height: 18px; accent-color: var(--oro); }
+
+/* Oraciones: apartados */
+.saltos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 34px; }
+.saltos a { padding: 0.55em 1.1em; border-radius: 999px; background: var(--papel); box-shadow: var(--sombra); text-decoration: none; font-weight: 800; font-size: 0.88rem; color: var(--azul); transition: transform 0.3s var(--ease), background 0.3s, color 0.3s; }
+.saltos a:hover { background: var(--azul); color: #fff; transform: translateY(-2px); }
+.tarjeta .preparada { font-size: 0.82rem; color: var(--turquesa); margin-top: -0.4em; }
+.tarjeta .preparada b { color: var(--turquesa); }
