@@ -78,6 +78,17 @@ window.SSCC_CONTENIDO = [
   /* --------------------- DOCUMENTOS DEL CENTRO --------------------- */
   {
     seccion: "documentos",
+    titulo: "Propuestas y compromisos para el curso 2026-2027",
+    descripcion: "Las cinco líneas del curso: fe y espiritualidad, Doctrina Social de la Iglesia, formación salesiana, realidad social actual y más espacios de convivencia.",
+    tipo: "imagen",
+    url: "material/documentos-centro/proyecto/propuestas-y-compromisos-2026-27.jpg",
+    fecha: "2026-10-19",
+    curso: "2026-27",
+    etiquetas: ["Proyecto de centro"],
+    destacado: true
+  },
+  {
+    seccion: "documentos",
     titulo: "Acta del encuentro de centro · 19 de septiembre",
     descripcion: "Evaluación del curso anterior, grupos de formación y acompañamiento, acuerdos y prioridades del curso 2026-27.",
     tipo: "pdf",
