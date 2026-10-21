@@ -22,12 +22,12 @@ const NOMBRE_CARPETA = "Web SSCC Nervión";
 const HOJA = "Material";
 const HOJA_PROP = "Propuestas";
 const COLUMNAS = ["id", "seccion", "titulo", "descripcion", "tipo", "url", "fecha", "curso", "etiquetas",
-  "destacado", "texto", "caduca", "hora", "lugar", "archivo", "visible", "creado", "emergente", "imagen", "ambito", "fin"];
+  "destacado", "texto", "caduca", "hora", "lugar", "archivo", "visible", "creado", "emergente", "imagen", "ambito", "fin", "evento"];
 const COL_PROP = ["id", "recibido", "nombre", "correo", "tipo_material", "titulo", "texto", "fecha",
   "enlace", "archivo", "estado"];
-const SUBCARPETAS = { temas: "Temas", oraciones: "Oraciones", provincia: "Provincia", documentos: "Documentos del centro", elenco: "Elenco", grupos: "Grupos",
+const SUBCARPETAS = { temas: "Temas", oraciones: "Oraciones", provincia: "Provincia", documentos: "Documentos del centro", elenco: "Elenco", consejo: "Consejo local", grupos: "Grupos",
   avisos: "Avisos", calendario: "Calendario", "provincia-web": "Provincia", propuestas: "Propuestas recibidas" };
-const TEXTO_PLANO = ["fecha", "curso", "hora", "caduca", "recibido", "creado", "fin"];
+const TEXTO_PLANO = ["fecha", "curso", "hora", "caduca", "recibido", "creado", "fin", "evento"];
 
 /* ------------------------------------------------------------- Instalar */
 function instalar() {
@@ -162,7 +162,8 @@ function doGet(e) {
     const guardado = cache.get("contenido");
     if (guardado) return ContentService.createTextOutput(guardado).setMimeType(ContentService.MimeType.JSON);
     const items = filas(HOJA).filter((r) => r.visible !== "no").map((r) => { delete r._fila; delete r.visible; return r; });
-    const json = JSON.stringify({ ok: true, items: items });
+    const importado = PropertiesService.getScriptProperties().getProperty("IMPORTADO") === "si";
+    const json = JSON.stringify({ ok: true, importado: importado, items: items });
     try { cache.put("contenido", json, 300); } catch (err) {}
     return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
   }
@@ -178,10 +179,12 @@ function doPost(e) {
     switch (d.accion) {
       case "proponer": return respuesta(proponer(d));
       case "entrar": comprobarClave(d); return respuesta({ ok: true });
-      case "listar": comprobarClave(d); return respuesta({ ok: true, items: filas(HOJA), propuestas: filas(HOJA_PROP).reverse(), hoja: libro().getUrl(), carpeta: carpeta().getUrl() });
+      case "listar": comprobarClave(d); return respuesta({ ok: true, importado: PropertiesService.getScriptProperties().getProperty("IMPORTADO") === "si", items: filas(HOJA), propuestas: filas(HOJA_PROP).reverse(), hoja: libro().getUrl(), carpeta: carpeta().getUrl() });
       case "publicar": comprobarClave(d); return respuesta(publicar(d));
       case "visible": comprobarClave(d); cambiar(HOJA, d.id, "visible", d.visible ? "" : "no"); limpiarCache(); return respuesta({ ok: true });
       case "eliminar": comprobarClave(d); return respuesta(eliminar(d));
+      case "editar": comprobarClave(d); return respuesta(editar(d));
+      case "importar": comprobarClave(d); return respuesta(importar(d));
       case "estado-propuesta": comprobarClave(d); cambiar(HOJA_PROP, d.id, "estado", d.estado || "revisada"); return respuesta({ ok: true });
       default: return respuesta({ ok: false, error: "Acción desconocida" });
     }
@@ -197,7 +200,7 @@ function publicar(d) {
   if (!it.titulo || !it.seccion) throw new Error("Faltan el título o la sección");
   const f = guardarArchivo(d.archivo, it.seccion);
   const esImagen = f && /^image\//.test(f.getMimeType());
-  const cartel = (it.seccion === "avisos" || it.seccion === "elenco") && esImagen;   // cartel del aviso o foto de la persona
+  const cartel = ["avisos", "elenco", "consejo"].indexOf(it.seccion) >= 0 && esImagen;   // cartel del aviso o foto de la persona
   const fila = {
     id: Utilities.getUuid(),
     seccion: it.seccion,
@@ -219,12 +222,63 @@ function publicar(d) {
     emergente: it.emergente ? "sí" : "",
     imagen: cartel ? "https://drive.google.com/thumbnail?id=" + f.getId() + "&sz=w1200" : (it.imagen || ""),
     ambito: it.ambito || "",
-    fin: it.fin || ""
+    fin: it.fin || "",
+    evento: it.evento || ""
   };
   anadir(HOJA, COLUMNAS, fila);
   if (d.propuesta) { try { cambiar(HOJA_PROP, d.propuesta, "estado", "publicada"); } catch (e) {} }
   limpiarCache();
   return { ok: true, item: fila };
+}
+
+/* Modifica una fila ya publicada. Si llega un archivo nuevo, sustituye al anterior. */
+function editar(d) {
+  const r = buscarFila(HOJA, d.id);
+  if (!r) throw new Error("No encontrado");
+  const it = d.item || {};
+  const h = libro().getSheetByName(HOJA);
+  const cab = h.getRange(1, 1, 1, h.getLastColumn()).getValues()[0];
+  const valores = {};
+  ["titulo", "descripcion", "tipo", "url", "fecha", "etiquetas", "texto", "caduca", "hora", "lugar", "ambito", "fin", "imagen", "evento", "archivo"].forEach((c) => {
+    if (it[c] === undefined || (c === "archivo" && !it[c])) return;
+    valores[c] = Array.isArray(it[c]) ? it[c].join(", ") : it[c];
+  });
+  if (it.destacado !== undefined) valores.destacado = it.destacado ? "sí" : "";
+  if (it.emergente !== undefined) valores.emergente = it.emergente ? "sí" : "";
+  if (valores.fecha) valores.curso = it.curso || curso(valores.fecha);
+  const seccion = it.seccion || r.seccion;
+  const f = guardarArchivo(d.archivo, seccion);
+  if (f) {
+    const foto = ["avisos", "elenco", "consejo"].indexOf(seccion) >= 0 && /^image\//.test(f.getMimeType());
+    if (foto) valores.imagen = "https://drive.google.com/thumbnail?id=" + f.getId() + "&sz=w1200";
+    else valores.url = f.getUrl();
+    if (r.archivo && !/^https?:/.test(r.archivo)) { try { DriveApp.getFileById(r.archivo).setTrashed(true); } catch (e) {} }
+    valores.archivo = f.getId();
+  }
+  Object.keys(valores).forEach((c) => {
+    const col = cab.indexOf(c);
+    if (col >= 0) h.getRange(r._fila, col + 1).setValue(valores[c]);
+  });
+  limpiarCache();
+  return { ok: true };
+}
+
+/* Pasa a la hoja una lista de elementos (p. ej. el elenco del censo) para poder editarlos desde el panel. */
+function importar(d) {
+  const lista = d.items || [];
+  const ahora = Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd HH:mm");
+  lista.forEach((it) => {
+    const fila = { id: Utilities.getUuid(), creado: ahora, visible: "" };
+    COLUMNAS.forEach((c) => {
+      if (c === "id" || c === "creado" || c === "visible" || it[c] === undefined || it[c] === null) return;
+      fila[c] = Array.isArray(it[c]) ? it[c].join(", ") : (it[c] === true ? "sí" : it[c] === false ? "" : it[c]);
+    });
+    if (!fila.curso && fila.fecha) fila.curso = curso(fila.fecha);
+    anadir(HOJA, COLUMNAS, fila);
+  });
+  if (d.final) PropertiesService.getScriptProperties().setProperty("IMPORTADO", "si");
+  limpiarCache();
+  return { ok: true, n: lista.length, importado: !!d.final };
 }
 
 function eliminar(d) {
