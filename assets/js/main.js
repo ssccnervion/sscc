@@ -127,7 +127,7 @@
         </div>
         <div>
           <h4>Secciones</h4>
-          <ul>${NAV.slice(1).flatMap((n) => [n, ...(n.hijos || [])]).map((n) => `<li><a href="${n.href}">${n.texto}</a></li>`).join("")}<li><a href="#" data-instalar hidden>📲 Descargar la app</a></li></ul>
+          <ul>${NAV.slice(1).map((n) => `<li><a href="${n.href}">${n.texto}</a></li>`).join("")}<li><a href="#" data-instalar hidden>📲 Descargar la app</a></li><li><a href="panel.html">⚙️ Panel de gestión</a></li></ul>
         </div>
         <div>
           <h4>Contacto</h4>
