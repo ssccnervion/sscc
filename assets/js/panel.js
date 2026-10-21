@@ -156,6 +156,133 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+
+  /* -------------------------------------------- Varias fechas a la vez */
+  const MESES_TXT = { ene: 1, feb: 2, mar: 3, abr: 4, may: 5, jun: 6, jul: 7, ago: 8, sep: 9, set: 9, oct: 10, nov: 11, dic: 12 };
+  const iso = (y, m, d) => `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  // Año según el curso: de septiembre a diciembre, el año en que empieza; de enero a agosto, el siguiente
+  function anioCurso(mes) {
+    const h = new Date(), ini = h.getMonth() + 1 >= 9 ? h.getFullYear() : h.getFullYear() - 1;
+    return mes >= 9 ? ini : ini + 1;
+  }
+  function leerLinea(linea) {
+    let t = linea.replace(/^[ ]+|[ ]+$/g, "").replace(/ {2,}/g, " ");
+    if (!t) return null;
+    let fecha = "", fin = "", hora = "";
+    const mes = (txt) => MESES_TXT[String(txt).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").slice(0, 3)];
+    const anio = (y, m) => (y ? (String(y).length === 2 ? 2000 + +y : +y) : anioCurso(m));
+    let m;
+    // 2026-11-21
+    if ((m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\b/))) { fecha = iso(m[1], m[2], m[3]); t = t.slice(m[0].length); }
+    // 20-22 nov · 20 al 22 de noviembre de 2026
+    else if ((m = t.match(/^(\d{1,2})\s*(?:-|al|a)\s*(\d{1,2})\s+(?:de\s+)?([a-záéíóú]{3,})\.?(?:\s+(?:de\s+)?(\d{4}))?/i)) && mes(m[3])) { const mm = mes(m[3]), y = anio(m[4], mm); fecha = iso(y, mm, m[1]); fin = iso(y, mm, m[2]); t = t.slice(m[0].length); }
+    // 21 nov · 21 de noviembre de 2026 · sábado 21 de noviembre
+    else if ((m = t.match(/^(?:[a-záéíóú]+,?\s+)?(\d{1,2})\s+(?:de\s+)?([a-záéíóú]{3,})\.?(?:\s+(?:de\s+)?(\d{4}))?/i)) && mes(m[2])) { const mm = mes(m[2]); fecha = iso(anio(m[3], mm), mm, m[1]); t = t.slice(m[0].length); }
+    // 20-22/11/2026 · 20 al 22/11
+    else if ((m = t.match(/^(\d{1,2})\s*(?:-|al|a)\s*(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?\b/i))) { const y = anio(m[4], +m[3]); fecha = iso(y, m[3], m[1]); fin = iso(y, m[3], m[2]); t = t.slice(m[0].length); }
+    // 21/11/2026 · 21/11 · 21-11
+    else if ((m = t.match(/^(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?\b/))) { fecha = iso(anio(m[3], +m[2]), m[2], m[1]); t = t.slice(m[0].length); }
+    if (!fecha || isNaN(new Date(fecha))) return { error: "No encuentro la fecha al principio de la línea", linea };
+    // separadores: · | ; tabulador o guion entre partes
+    let partes = t.replace(/^[ ·|;,:\t-]+/, "").split(/ *(?:\t|·|\||;) *| +- +/).map((x) => x.trim()).filter(Boolean);
+    if (partes[0] && (m = partes[0].match(/^(\d{1,2})[:.h](\d{2})?\s*h?$/i))) { hora = `${m[1].padStart(2, "0")}:${m[2] || "00"}`; partes.shift(); }
+    else if (partes[0] && (m = partes[0].match(/^(\d{1,2})[:.h](\d{2})?\s*h?\s+(.+)$/i))) { hora = `${m[1].padStart(2, "0")}:${m[2] || "00"}`; partes[0] = m[3]; }
+    const titulo = partes.shift();
+    if (!titulo) return { error: "Falta el nombre del encuentro", linea };
+    return { fecha, fin, hora, titulo, lugar: partes.join(" · ") };
+  }
+
+  function formularioLote(caja) {
+    caja.innerHTML = `
+      <form class="paso" id="form-lote">
+        <h3><span class="paso-num">2</span> Pega las fechas, una por línea</h3>
+        <fieldset class="campo"><legend>¿De quién son las fechas?</legend><div class="tipos-material">
+          <input type="radio" id="la1" name="ambito" value="centro" checked><label for="la1">Centro Nervión</label>
+          <input type="radio" id="la2" name="ambito" value="provincia"><label for="la2">Provincia</label>
+          <input type="radio" id="la3" name="ambito" value="region"><label for="la3">Región</label></div></fieldset>
+        <div class="plantilla-caja">
+          <div><b>¿Muchas fechas?</b><span>Descarga la plantilla de Excel, rellénala y súbela aquí.</span></div>
+          <a class="btn btn--sm btn--linea" href="material/plantillas/plantilla-fechas.xlsx" download>Descargar plantilla</a>
+          <label class="btn btn--sm btn--oro subir-plantilla">Subir plantilla rellena<input type="file" accept=".xlsx,.xls,.csv,.ods" hidden></label>
+        </div>
+        <label class="campo" style="margin-top:14px"><span>O pega las fechas, una por línea</span><textarea name="lista" rows="9" placeholder="21/11 · 18:00 · Retiro de Adviento · Casa de espiritualidad&#10;20-22 nov · Encuentros Pinardi · Sanlúcar la Mayor&#10;5 de diciembre 17:00 Aspirantes (Antonio)"></textarea>
+          <small class="ayuda-campo">Cada línea: <b>fecha</b> (21/11, 21/11/2026, 21 nov, 20-22 nov…), <b>hora</b> opcional, <b>nombre</b> y <b>lugar</b> opcional, separados por «·», «|», «;» o tabulador. También se puede pegar desde una hoja de cálculo. Si no pones el año, se usa el del curso.</small></label>
+        <h3 style="margin-top:26px"><span class="paso-num">3</span> Revisa lo que se va a crear</h3>
+        <div class="lote-vista"><p class="nota">Aquí aparecerán las fechas que se reconozcan.</p></div>
+        <div class="publicar-acciones">
+          <p class="panel-error" hidden></p>
+          <button class="btn btn--grande btn--oro" type="submit" disabled>Publicar las fechas ${I.flecha}</button>
+        </div>
+      </form>`;
+    const f = $("#form-lote", caja), vista = $(".lote-vista", f), btn = $("button[type=submit]", f);
+    let filas = [], desdeArchivo = null;
+    const NOMBRES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    const fmt = (d) => { const [y, m, dd] = d.split("-"); return `${+dd} ${NOMBRES[+m - 1]} ${y}`; };
+    function analizar() {
+      filas = desdeArchivo || f.lista.value.split(/\n/).map(leerLinea).filter(Boolean);
+      const buenas = filas.filter((x) => !x.error);
+      vista.innerHTML = filas.length ? `<table class="tabla-lote"><thead><tr><th>Día</th><th>Hora</th><th>Encuentro</th><th>Lugar</th>${desdeArchivo ? "<th>Ámbito</th>" : ""}</tr></thead><tbody>${filas.map((x) => x.error
+        ? `<tr class="mal"><td colspan="4"><b>${esc(x.error)}:</b> ${esc(x.linea)}</td></tr>`
+        : `<tr><td>${fmt(x.fecha)}${x.fin ? ` – ${fmt(x.fin)}` : ""}</td><td>${esc(x.hora)}</td><td>${esc(x.titulo)}</td><td>${esc(x.lugar)}</td>${desdeArchivo ? `<td>${esc({ centro: "Centro", provincia: "Provincia", region: "Región" }[x.ambito] || "—")}</td>` : ""}</tr>`).join("")}</tbody></table>
+        <p class="nota">${buenas.length} fecha${buenas.length === 1 ? "" : "s"} lista${buenas.length === 1 ? "" : "s"}${filas.length > buenas.length ? ` · ${filas.length - buenas.length} línea(s) por corregir (no se publicarán)` : ""}.</p>`
+        : `<p class="nota">Aquí aparecerán las fechas que se reconozcan.</p>`;
+      btn.disabled = !buenas.length;
+      btn.innerHTML = `Publicar ${buenas.length || ""} fecha${buenas.length === 1 ? "" : "s"} ${I.flecha}`;
+    }
+    f.lista.addEventListener("input", () => { desdeArchivo = null; analizar(); });
+    // Subir la plantilla de Excel (o un CSV)
+    $(".subir-plantilla input", f).addEventListener("change", async (e) => {
+      const file = e.target.files[0]; if (!file) return;
+      try {
+        if (!window.XLSX) await new Promise((ok, mal) => { const sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"; sc.onload = ok; sc.onerror = mal; document.head.append(sc); });
+        const wb = XLSX.read(await file.arrayBuffer(), { cellDates: true });
+        const hoja = wb.Sheets[wb.SheetNames.find((n) => /fecha/i.test(n)) || wb.SheetNames.find((n) => !/instruc|ejemplo/i.test(n)) || wb.SheetNames[0]];
+        const filasHoja = XLSX.utils.sheet_to_json(hoja, { header: 1, raw: true, defval: "" });
+        const cab = (filasHoja.shift() || []).map((c) => String(c).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+        const col = (re, def) => { const i = cab.findIndex((c) => re.test(c)); return i < 0 ? def : i; };
+        const cF = col(/^fecha|^dia/, 0), cH = col(/hasta|fin/, 1), cHo = col(/^hora/, 2), cT = col(/encuentro|titulo|nombre|actividad/, 3), cL = col(/lugar/, 4), cA = col(/ambito/, 5);
+        const dia = (v) => {
+          if (v instanceof Date) return iso(v.getFullYear(), v.getMonth() + 1, v.getDate());
+          const t = String(v || "").trim(); if (!t) return "";
+          const r = leerLinea(t + " · x"); return r && !r.error ? r.fecha : "";
+        };
+        const hora = (v) => {
+          if (v instanceof Date) return `${String(v.getHours()).padStart(2, "0")}:${String(v.getMinutes()).padStart(2, "0")}`;
+          if (typeof v === "number" && v < 1) { const m = Math.round(v * 1440); return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
+          const m = String(v || "").match(/(\d{1,2})[:.h](\d{2})?/); return m ? `${m[1].padStart(2, "0")}:${m[2] || "00"}` : "";
+        };
+        const amb = (v) => { const t = String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); return /prov/.test(t) ? "provincia" : /reg/.test(t) ? "region" : /cent/.test(t) ? "centro" : ""; };
+        desdeArchivo = filasHoja.filter((r) => r.some((c) => String(c).trim())).map((r) => {
+          const fecha = dia(r[cF]), titulo = String(r[cT] || "").trim();
+          const linea = r.filter((c) => String(c).trim()).map((c) => c instanceof Date ? c.toLocaleDateString("es-ES") : String(c)).join(" · ");
+          if (!fecha) return { error: "Fecha no válida", linea };
+          if (!titulo) return { error: "Falta el nombre del encuentro", linea };
+          return { fecha, fin: dia(r[cH]), hora: hora(r[cHo]), titulo, lugar: String(r[cL] || "").trim(), ambito: amb(r[cA]) };
+        });
+        f.lista.value = "";
+        analizar();
+        toast(`${desdeArchivo.filter((x) => !x.error).length} fechas leídas de «${file.name}»`);
+      } catch (ex) { toast("No se ha podido leer el archivo: " + ex.message, "mal"); }
+      e.target.value = "";
+    });
+    f.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const ambito = f.ambito.value;
+      const items = filas.filter((x) => !x.error).map((x) => ({ seccion: "calendario", ambito: x.ambito || ambito, titulo: x.titulo, fecha: x.fecha, fin: x.fin, hora: x.hora, lugar: x.lugar, curso: curso(x.fecha) }));
+      if (!items.length) return;
+      cargando(btn, `Publicando ${items.length} fechas…`);
+      try {
+        for (let i = 0; i < items.length; i += 40) await api({ accion: "importar", items: items.slice(i, i + 40) });
+        await recargar();
+        caja.innerHTML = `<div class="paso publicado-ok"><div class="ok-hex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>
+          <h3>¡${items.length} fechas publicadas!</h3><p>Ya están en el calendario de la web. Puedes corregir cualquiera desde «Publicado».</p>
+          <div class="publicar-acciones centrado"><a class="btn" href="calendario.html" target="_blank" rel="noopener">Ver el calendario ${I.externo}</a><button class="btn btn--linea otro" type="button">Publicar otra cosa</button></div></div>`;
+        $(".otro", caja).addEventListener("click", () => escritorio("publicar"));
+      } catch (ex) { listo(btn); const er = $(".panel-error", f); er.textContent = "No se han podido publicar: " + ex.message; er.hidden = false; }
+    });
+    caja.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   /* ------------------------------------------------ Textos de la web */
   const PAGINAS_TEXTOS = [["index.html", "Inicio"], ["material.html", "Material"], ["temas.html", "Temas"], ["oraciones.html", "Oraciones"], ["documentos.html", "Documentos del centro"], ["pva.html", "PVA"], ["calendario.html", "Calendario"], ["quienes-somos.html", "Quiénes somos"], ["asociacion.html", "Asociación"], ["centro.html", "Centro"], ["grupos.html", "Grupos"], ["provincia.html", "Provincia"], ["avisos.html", "Avisos"], ["enviar.html", "Enviar material"]];
   async function bloquesDeTexto() {
@@ -225,17 +352,18 @@
   // Las opciones del panel siguen el mismo orden y numeración que el menú de la web
   const GRUPOS = [
     { n: "1", t: "Material", items: [["temas", "1A"], ["oraciones", "1B"], ["documentos", "1C"], ["pva-video", "1D"]] },
-    { n: "2", t: "Calendario", items: [["calendario", "2"]] },
+    { n: "2", t: "Calendario", items: [["calendario", "2"], ["calendario-lote", "2"]] },
     { n: "3", t: "Quiénes somos", items: [["consejo", "3B"], ["elenco", "3B"], ["grupos", "3C"]] },
     { n: "4", t: "Provincia", items: [["provincia", "4"], ["provincia-web", "4"]] },
     { n: "5", t: "Avisos", items: [["avisos", "5"], ["novedades", "5"]] },
     { n: "", t: "Toda la web", items: [["textos", ""]] }
   ];
   const TEXTOS_OPCION = { nombre: "Textos de la web", desc: "Portada, Asociación, contacto, citas…", ico: '<path d="M4 7V5h16v2M9 19h6M12 5v14"/>' };
+  const LOTE_OPCION = { nombre: "Varias fechas a la vez", desc: "Pega una lista y se crean todas", ico: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7 14h4M7 17h7"/>' };
 
   function vistaPublicar(cuerpo, seccionInicial, datosIniciales) {
     const opcion = ([k, cod]) => {
-      const v = k === "textos" ? TEXTOS_OPCION : SECCIONES[k];
+      const v = k === "textos" ? TEXTOS_OPCION : k === "calendario-lote" ? LOTE_OPCION : SECCIONES[k];
       return `<button type="button" class="opcion-seccion" data-sec="${k}">
         <span class="os-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${v.ico}</svg></span>
         <b>${cod ? `<span class="os-cod">${cod}</span>` : ""}${v.nombre}</b><small>${v.desc}</small>
@@ -256,6 +384,7 @@
     $$(".opcion-seccion", cuerpo).forEach((b) => b.addEventListener("click", (ev) => {
       if (ev.isTrusted) editando = null;
       $$(".opcion-seccion", cuerpo).forEach((x) => x.classList.toggle("activa", x === b));
+      if (b.dataset.sec === "calendario-lote") { formularioLote($(".formulario-publicar", cuerpo)); return; }
       if (b.dataset.sec === "textos") { formularioTextos($(".formulario-publicar", cuerpo), editando && editando.titulo); editando = null; return; }
       formularioPublicar($(".formulario-publicar", cuerpo), b.dataset.sec, datosIniciales);
       datosIniciales = null;
@@ -475,29 +604,56 @@
     cuerpo.innerHTML = `
       <section class="paso">
         <div class="publicado-cab">
-          <h3>Lo que has publicado desde el panel</h3>
-          <select class="filtro-sec"><option value="">Todas las secciones</option>${GRUPOS.map((g) => `<optgroup label="${g.n ? g.n + " · " : ""}${g.t}">${g.items.map(([k]) => `<option value="${k}">${k === "textos" ? TEXTOS_OPCION.nombre : SECCIONES[k].nombre}</option>`).join("")}</optgroup>`).join("")}</select>
+          <h3>Lo que está publicado</h3>
+          <label class="buscar-pub"><span class="sr-only">Buscar</span><input type="search" placeholder="Buscar por título…"></label>
         </div>
         <p class="nota">Editar permite cambiar datos o foto. Ocultar lo quita de la web pero lo guarda. Borrar lo elimina también de Drive (va a la papelera).</p>
         ${!datos.importado ? `<div class="importar-caja"><div><b>Hay ${importable().length} elementos en el archivo de la web que aún no se pueden editar aquí.</b><span>Pásalos al panel (una sola vez) y desde entonces todo se podrá editar, ocultar o borrar desde aquí.</span></div><button class="btn btn--oro btn--sm importar" type="button">Pasar todo al panel</button></div>` : ""}
         <div class="lista-publicado"></div>
       </section>`;
     const cont = $(".lista-publicado", cuerpo);
-    function pintar() {
-      const f = $(".filtro-sec", cuerpo).value;
-      const l = lista.filter((i) => !f || i.seccion === f);
-      cont.innerHTML = l.length ? l.map((i) => `
+    const abiertos = new Set(), completos = new Set();
+    const fila = (i) => `
         <article class="fila-pub${i.visible === "no" ? " oculto" : ""}" data-id="${esc(i.id)}">
-          <span class="fp-sec">${esc((SECCIONES[i.seccion] || {}).nombre || (i.seccion === "textos" ? "Texto de la web" : i.seccion))}</span>
-          <div class="fp-info"><b>${esc(i.titulo)}</b><small>${esc(i.fecha || "")}${i.visible === "no" ? " · Oculto" : ""}${i.url ? ` · <a href="${esc(i.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</small></div>
+          <div class="fp-info"><b>${esc(i.titulo)}</b><small>${esc(i.evento || i.fecha || "")}${i.visible === "no" ? " · Oculto" : ""}${i.url && /^https?:|\.\w{2,4}$/.test(i.url) ? ` · <a href="${esc(i.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</small></div>
           <div class="fp-acciones">
             <button class="btn btn--sm" data-acc="editar">Editar</button>
             <button class="btn btn--sm btn--linea" data-acc="visible">${i.visible === "no" ? "Mostrar" : "Ocultar"}</button>
             <button class="btn btn--sm btn--peligro" data-acc="eliminar">Borrar</button>
           </div>
-        </article>`).join("") : `<div class="vacio"><div class="hexvacio"></div><p>Todavía no hay nada publicado desde el panel.</p></div>`;
+        </article>`;
+    const nombreSec = (k) => k === "textos" ? TEXTOS_OPCION.nombre : (SECCIONES[k] || {}).nombre || k;
+    function pintar() {
+      const q = ($("input[type=search]", cuerpo).value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const coincide = (i) => !q || String(i.titulo).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(q);
+      const conocidas = new Set(GRUPOS.flatMap((g) => g.items.map(([k]) => k)));
+      const grupos = [...GRUPOS, { n: "", t: "Otros", items: [...new Set(lista.map((i) => i.seccion))].filter((k) => !conocidas.has(k)).map((k) => [k, ""]) }];
+      const html = grupos.map((g) => {
+        const subs = g.items.filter(([k]) => k !== "calendario-lote").map(([k, cod]) => {
+          const l = lista.filter((i) => i.seccion === k && coincide(i));
+          // calendario: lo próximo primero
+          if (k === "calendario") { const h = hoy(); l.sort((a, b) => ((a.fecha || "") < h) - ((b.fecha || "") < h) || ((a.fecha || "") < h ? (b.fecha || "").localeCompare(a.fecha || "") : (a.fecha || "").localeCompare(b.fecha || ""))); }
+          return { k, cod, l };
+        }).filter((x) => x.l.length);
+        const total = subs.reduce((n, x) => n + x.l.length, 0);
+        if (!total) return "";
+        const abierto = q || abiertos.has(g.t);
+        return `<details class="grupo-pub" data-g="${esc(g.t)}"${abierto ? " open" : ""}>
+          <summary>${g.n ? `<span class="gp-num">${g.n}</span>` : ""}<b>${esc(g.t)}</b><span class="cuenta">${total}</span><svg class="vivo-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+          ${subs.map(({ k, cod, l }) => {
+            const todo = q || completos.has(k);
+            return `<div class="sub-pub"><h5>${cod ? `<span class="os-cod">${cod}</span>` : ""}${esc(nombreSec(k))} <span class="cuenta">${l.length}</span></h5>
+              <div class="lista-publicado">${(todo ? l : l.slice(0, 5)).map(fila).join("")}</div>
+              ${!todo && l.length > 5 ? `<button class="ver-mas-pub" type="button" data-k="${k}">Ver ${l.length - 5} más</button>` : ""}</div>`;
+          }).join("")}
+        </details>`;
+      }).join("");
+      cont.innerHTML = html || `<div class="vacio"><div class="hexvacio"></div><p>${q ? "No hay nada con ese título." : "Todavía no hay nada publicado desde el panel."}</p></div>`;
+      $$("details.grupo-pub", cont).forEach((d) => d.addEventListener("toggle", () => { d.open ? abiertos.add(d.dataset.g) : abiertos.delete(d.dataset.g); }));
     }
-    $(".filtro-sec", cuerpo).addEventListener("change", pintar);
+    $("input[type=search]", cuerpo).addEventListener("input", pintar);
+    cont.addEventListener("click", (e) => { const v = e.target.closest(".ver-mas-pub"); if (v) { completos.add(v.dataset.k); pintar(); } });
+
     const imp = $(".importar", cuerpo);
     if (imp) imp.addEventListener("click", async () => {
       cargando(imp, "Pasando…");
@@ -510,7 +666,7 @@
         if (!todo.length) await api({ accion: "importar", items: [], final: true });
         await recargar();
         toast("Todo el contenido está ya en el panel");
-        vistaPublicado(cuerpo);
+        escritorio("publicado");
       } catch (ex) { listo(imp); toast(ex.message, "mal"); }
     });
     cont.addEventListener("click", async (e) => {
