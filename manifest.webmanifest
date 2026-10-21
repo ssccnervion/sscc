@@ -22,6 +22,7 @@
     { "name": "Avisos", "url": "./avisos.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
     { "name": "Material", "url": "./material.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
     { "name": "Provincia", "url": "./provincia.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Enviar material", "short_name": "Enviar", "url": "./enviar.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Enviar material", "short_name": "Enviar", "url": "./enviar.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Panel de gestión", "short_name": "Panel", "url": "./panel.html", "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }] }
   ]
 }
