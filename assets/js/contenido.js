@@ -35,7 +35,8 @@
    AVISOS: usa seccion "avisos". Con destacado: true sale como «Importante» y
    aparece primero; con emergente: true sale además como ventana emergente.
    imagen: cartel del aviso · url: enlace (p. ej. formulario de inscripción).
-   Sin «caduca», el aviso pasa a «Fechas anteriores» al mes de su fecha.
+   evento: fecha de lo que anuncia (y fin si dura varios días): es la que se ve en el aviso.
+   Sin «caduca» ni «evento», el aviso pasa a «Fechas anteriores» al mes de su fecha.
    ========================================================================= */
 window.SSCC_CONTENIDO = [
   /* ---------------------- WEB DE LA PROVINCIA ---------------------- */
@@ -198,6 +199,8 @@ window.SSCC_CONTENIDO = [
     seccion: "avisos",
     titulo: "Nos vemos en Pinardi · 21 y 22 de noviembre",
     fecha: "2026-10-19",
+    evento: "2026-11-21",
+    fin: "2026-11-22",
     caduca: "2026-11-08",
     destacado: true,
     emergente: true,
@@ -215,6 +218,7 @@ window.SSCC_CONTENIDO = [
     seccion: "avisos",
     titulo: "La Misa del sábado 24 pasa al domingo 25 a las 19:30",
     fecha: "2026-10-18",
+    evento: "2026-10-25",
     caduca: "2026-10-25",
     destacado: true,
     emergente: true,
@@ -224,6 +228,7 @@ window.SSCC_CONTENIDO = [
     seccion: "avisos",
     titulo: "Encuentro de centro · 8 de noviembre",
     fecha: "2026-10-18",
+    evento: "2026-11-08",
     caduca: "2026-11-08",
     texto: "¡Tenemos encuentro de centro! Todos los detalles, en el cartel.",
     url: "material/calendario/encuentro-de-centro-8nov26.jpg"
@@ -265,6 +270,34 @@ window.SSCC_CONTENIDO = [
 
   /* ----------------------------- ELENCO ---------------------------- */
   // Cada persona: { seccion: "elenco", titulo: "Nombre", descripcion: "Salesiana cooperadora desde 2015", imagen: "ruta o enlace de la foto", url: "vídeo (opcional)" }
+  // Del censo del centro (solo nombre, primer apellido y año de la Promesa). Las fotos se añaden desde el panel con el mismo nombre.
+  {"seccion": "elenco", "titulo": "Laura Iris Márquez", "descripcion": "Salesiana cooperadora desde 2022"},
+  {"seccion": "elenco", "titulo": "Mª Ángeles Carranza", "descripcion": "Salesiana cooperadora desde 2019"},
+  {"seccion": "elenco", "titulo": "Eva Mª Carrillo", "descripcion": "Salesiana cooperadora desde 2016"},
+  {"seccion": "elenco", "titulo": "María Angeles Chavez", "descripcion": "Salesiana cooperadora desde 2012"},
+  {"seccion": "elenco", "titulo": "Maria Auxiliadora Duque", "descripcion": "Salesiana cooperadora desde 1998"},
+  {"seccion": "elenco", "titulo": "María Dolores Galan", "descripcion": "Salesiana cooperadora desde 1988"},
+  {"seccion": "elenco", "titulo": "Rosario García", "descripcion": "Salesiana cooperadora desde 2016"},
+  {"seccion": "elenco", "titulo": "Antonio García", "descripcion": "Salesiano cooperador desde 2011"},
+  {"seccion": "elenco", "titulo": "Susana González", "descripcion": "Salesiana cooperadora desde 1984"},
+  {"seccion": "elenco", "titulo": "María Elena González", "descripcion": "Salesiana cooperadora desde 2003"},
+  {"seccion": "elenco", "titulo": "María José Hoyos", "descripcion": "Salesiana cooperadora desde 1997"},
+  {"seccion": "elenco", "titulo": "María Dolores Jimenez", "descripcion": "Salesiana cooperadora desde 2003"},
+  {"seccion": "elenco", "titulo": "María Angeles Martínez", "descripcion": "Salesiana cooperadora desde 2005"},
+  {"seccion": "elenco", "titulo": "Lidia Medina", "descripcion": "Salesiana cooperadora desde 1998"},
+  {"seccion": "elenco", "titulo": "Carmen María Muñoz", "descripcion": "Salesiana cooperadora desde 2011"},
+  {"seccion": "elenco", "titulo": "Cristina Quiros", "descripcion": "Salesiana cooperadora desde 2012"},
+  {"seccion": "elenco", "titulo": "Elisa Sanchez", "descripcion": "Salesiana cooperadora desde 2012"},
+  {"seccion": "elenco", "titulo": "Carmen Sedas", "descripcion": "Salesiana cooperadora desde 2016"},
+  {"seccion": "elenco", "titulo": "Marina Tascón", "descripcion": "Salesiana cooperadora desde 2018"},
+  {"seccion": "elenco", "titulo": "Sandra Tolmo", "descripcion": "Salesiana cooperadora desde 2005"},
+  {"seccion": "elenco", "titulo": "Angela Triviño", "descripcion": "Salesiana cooperadora desde 1999"},
+  {"seccion": "elenco", "titulo": "Esther Uruñuela", "descripcion": "Salesiana cooperadora desde 2001"},
+  {"seccion": "elenco", "titulo": "Rosario Uruñuela", "descripcion": "Salesiana cooperadora desde 2006"},
+  {"seccion": "elenco", "titulo": "Blanca Vázquez", "descripcion": "Salesiana cooperadora desde 2018"},
+  {"seccion": "elenco", "titulo": "Carolina Alfaro", "descripcion": "Salesiana cooperadora desde 2026"},
+  {"seccion": "elenco", "titulo": "Isabel Santana", "descripcion": "Salesiana cooperadora desde 2026"},
+  {"seccion": "elenco", "titulo": "Rocío Vázquez", "descripcion": "Salesiana cooperadora desde 2026"},
 
   /* --------------------------- NOVEDADES -------------------------- */
   // Para anunciar en el tablón cambios de la web que no son material (nueva sección, Quiénes somos…)

@@ -297,6 +297,7 @@
       emergente: siNo(it.emergente),
       ambito: ({ "región": "region", region: "region", provincia: "provincia", provincial: "provincia" })[String(it.ambito || "").toLowerCase().trim()] || "centro",
       fin: /^\d{4}-\d{2}-\d{2}$/.test(it.fin || "") ? it.fin : "",
+      evento: /^\d{4}-\d{2}-\d{2}$/.test(it.evento || "") ? it.evento : "",
       imagen: (it.imagen || "").trim(),
       hora: it.hora || "",
       archivo: /^https?:/.test(it.archivo || "") ? it.archivo.trim() : "",
@@ -334,14 +335,18 @@
       const r = await fetch(CFG.apiGoogle + (CFG.apiGoogle.includes("?") ? "&" : "?") + "accion=contenido", { signal: ctrl.signal });
       clearTimeout(t);
       const j = await r.json();
-      if (j.ok) { lsSet(CLAVE_CACHE, JSON.stringify(j.items)); return j.items; }
+      if (j.ok) { const res = { items: j.items || [], importado: !!j.importado }; lsSet(CLAVE_CACHE, JSON.stringify(res)); return res; }
     } catch (err) { console.warn("No se pudo leer el contenido de Google; uso la última copia", err); }
-    try { return JSON.parse(lsGet(CLAVE_CACHE) || "[]"); } catch (e) { return []; }
+    try { const c = JSON.parse(lsGet(CLAVE_CACHE) || "null"); return Array.isArray(c) ? { items: c, importado: false } : (c || { items: [], importado: false }); } catch (e) { return { items: [], importado: false }; }
   }
 
   async function cargarContenido() {
     let datos = window.SSCC_CONTENIDO || [];
-    if (CFG.apiGoogle) datos = [...(await contenidoGoogle()), ...datos];
+    if (CFG.apiGoogle) {
+      // Cuando todo el contenido se ha pasado al panel, la web lee solo del panel
+      const g = await contenidoGoogle();
+      datos = g.importado ? g.items : [...g.items, ...datos];
+    }
     if (CFG.hojaCalculoCSV) {
       try {
         const r = await fetch(CFG.hojaCalculoCSV, { cache: "no-store" });
@@ -571,7 +576,7 @@
   /* ---------------------------------------------- Últimos (portada) */
   function ultimos(raiz, items) {
     const n = Number(raiz.dataset.cantidad || 6);
-    const material = items.filter((it) => !["avisos", "calendario", "provincia-web", "grupos", "elenco", "novedades"].includes(it.seccion));
+    const material = items.filter((it) => !["avisos", "calendario", "provincia-web", "grupos", "elenco", "consejo", "novedades", "textos", "pva-video"].includes(it.seccion));
     const lista = material.filter((it) => it.url || it.texto).slice(0, n);
     raiz.innerHTML = "";
     (lista.length ? lista : material.slice(0, n)).forEach((it, i) => raiz.append(tarjeta(it, i)));
@@ -607,7 +612,10 @@
 
   /* ------------------------------------------------------ Elenco (3B) */
   function elenco(raiz, items) {
-    const l = items.filter((it) => it.seccion === "elenco").sort((a, b) => a.titulo.localeCompare(b.titulo, "es"));
+    // Si el elenco ya está en el panel (hoja de Google), manda el panel; si no, el archivo de la web
+    const todos = items.filter((it) => it.seccion === "elenco");
+    const delPanel = todos.filter((it) => it.id);
+    const l = (delPanel.length ? delPanel : todos).sort((a, b) => a.titulo.localeCompare(b.titulo, "es"));
     if (!l.length) {
       raiz.innerHTML = `<div class="vacio"><div class="hexvacio"></div><p>Muy pronto subiremos aquí las fotos de cada miembro del centro.</p></div>`;
       return;
@@ -624,6 +632,20 @@
       const b = e.target.closest("[data-video]");
       if (b) { const p = l[+b.dataset.video]; abrir({ ...p, tipo: "video" }); }
     });
+    revelar(raiz);
+  }
+
+  /* ------------------------------------------------ Consejo local (3B) */
+  function consejo(raiz, items) {
+    const ORDEN = ["coordin", "secretar", "administr", "formaci", "delegad"];
+    const pos = (c) => { const i = ORDEN.findIndex((o) => (c || "").toLowerCase().includes(o)); return i < 0 ? 99 : i; };
+    const l = items.filter((it) => it.seccion === "consejo").sort((a, b) => pos(a.descripcion) - pos(b.descripcion) || a.titulo.localeCompare(b.titulo, "es"));
+    if (!l.length) { raiz.innerHTML = `<div class="vacio"><div class="hexvacio"></div><p>Muy pronto presentaremos aquí al consejo local.</p></div>`; return; }
+    raiz.innerHTML = l.map((p, i) => `
+      <div class="persona revelar" style="--d:${Math.min(i, 6) * 0.08}s">
+        <div class="foto">${p.imagen ? `<img src="${esc(p.imagen)}" alt="${esc(p.titulo)}" loading="lazy">` : esc(p.titulo.charAt(0))}</div>
+        <h3>${esc(p.descripcion || "")}</h3><p>${esc(p.titulo)}</p>
+      </div>`).join("");
     revelar(raiz);
   }
 
@@ -737,7 +759,7 @@
 
   function avisos(items) {
     const todos = items.filter((it) => it.seccion === "avisos");
-    const vigente = (it) => (it.caduca ? it.caduca >= HOY : (it.fecha || HOY) >= hace(30));
+    const vigente = (it) => (it.caduca ? it.caduca >= HOY : it.evento ? (it.fin || it.evento) >= HOY : (it.fecha || HOY) >= hace(30));
     const orden = (a, b) => (b.destacado - a.destacado) || (b.fecha || "").localeCompare(a.fecha || "");
     return {
       activos: todos.filter(vigente).sort(orden),
@@ -746,18 +768,23 @@
   }
 
   function avisoHTML(it, i = 0) {
-    const d = new Date((it.fecha || HOY) + "T12:00:00");
-    const cuerpo = parrafos(it.texto || it.descripcion || "");
+    // El hexágono muestra la fecha del evento que se anuncia; si no la hay, la de publicación
+    const fEv = it.evento || it.fecha || HOY;
+    const d = new Date(fEv + "T12:00:00");
+    const rango = it.evento && it.fin && it.fin !== it.evento ? textoRango({ fecha: it.evento, fin: it.fin }) : null;
+    const texto = it.texto || it.descripcion || "";
+    const cuerpo = parrafos(texto);
+    const largo = texto.length > 220 || (texto.match(/\n/g) || []).length > 3;
     const esImg = (u) => /\.(jpe?g|png|webp|gif)($|\?)|drive\.google\.com\/thumbnail/i.test(u || "");
     const cartel = it.imagen || (esImg(it.url) ? it.url : "");
     const caduca = it.caduca ? new Date(it.caduca + "T12:00:00") : null;
     return `
       <article class="aviso-item${it.destacado ? " importante" : ""}${cartel ? " con-cartel" : ""} revelar" style="--d:${Math.min(i, 6) * 0.06}s">
-        <div class="aviso-fecha"><b>${d.getDate()}</b><small>${MESES[d.getMonth()]}</small></div>
+        <div class="aviso-fecha${rango ? " rango" : ""}" title="${it.evento ? "Fecha del evento" : "Fecha de publicación"}"><b>${rango ? rango.b : d.getDate()}</b><small>${rango ? rango.s : MESES[d.getMonth()]}</small></div>
         <div class="aviso-cuerpo">
           ${it.destacado ? '<span class="aviso-badge">Importante</span>' : ""}
           <h3>${esc(it.titulo)}</h3>
-          ${cuerpo}
+          ${largo ? `<div class="aviso-texto plegado">${cuerpo}</div><button class="leer-mas" type="button" aria-expanded="false">Leer más</button>` : cuerpo}
           <div class="aviso-pie">
             ${it.url && !esImg(it.url) ? `<a class="btn btn--sm" href="${esc(it.url)}" target="_blank" rel="noopener">${/forms|formulario|inscri/i.test(it.url + it.titulo) ? "Inscribirme" : "Más información"} ${I.flechaDiag}</a>` : ""}
             ${cartel ? `<a class="btn btn--sm btn--linea" href="${esc(cartel)}" target="_blank" rel="noopener">Ver cartel</a>` : ""}
@@ -1277,6 +1304,27 @@
     });
   }
 
+  /* ------------------------------------- Textos de la web editables */
+  // Cualquier elemento con data-editable="clave" (y la entrada de cada página) se puede cambiar desde el panel
+  function marcarEditables() {
+    const p = $(".page-hero > .contenedor > p");
+    if (p && !p.dataset.editable) { p.dataset.editable = "entrada-" + PAGINA; p.dataset.etiqueta = "Entrada de la página"; }
+  }
+  function aplicarTextos(items) {
+    const t = {};
+    items.filter((it) => it.seccion === "textos" && it.titulo).forEach((it) => (t[it.titulo] = it.texto));
+    $$("[data-editable]").forEach((el) => {
+      const v = t[el.dataset.editable];
+      if (v === undefined || v === "") return;
+      el.innerHTML = el.dataset.tipo === "parrafos" ? parrafos(v) : esc(v).replace(/\*([^*\n]+)\*/g, "<b>$1</b>").replace(/\n/g, "<br>");
+    });
+    // Citas de la portada: una por línea, «Texto — Autor»
+    if (t.citas) $$("[data-citas]").forEach((el) => {
+      const l = t.citas.split(/\n+/).map((x) => x.trim()).filter(Boolean).map((x) => { const [a, b] = x.split(/\s+[—–-]\s+/); return { t: a, a: b || "" }; });
+      if (l.length) el.dataset.citas = JSON.stringify(l);
+    });
+  }
+
   /* -------------------------------------------- Citas de Don Bosco */
   function citas(raiz) {
     const lista = JSON.parse(raiz.dataset.citas || "[]");
@@ -1324,6 +1372,32 @@
     });
   }
 
+  /* Avisos largos: «Leer más» / «Leer menos» con efecto acordeón */
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".leer-mas");
+    if (!b) return;
+    const caja = b.previousElementSibling;
+    const abrir = caja.classList.contains("plegado");
+    if (abrir) {
+      caja.style.maxHeight = caja.offsetHeight + "px";
+      caja.classList.remove("plegado");
+      void caja.offsetHeight;
+      caja.style.maxHeight = caja.scrollHeight + "px";
+      caja.addEventListener("transitionend", () => { if (!caja.classList.contains("plegado")) caja.style.maxHeight = "none"; }, { once: true });
+    } else {
+      caja.style.maxHeight = caja.scrollHeight + "px";
+      void caja.offsetHeight;
+      caja.style.maxHeight = parseFloat(getComputedStyle(caja).fontSize) * 5.4 + "px";
+      caja.classList.add("plegado");
+      caja.addEventListener("transitionend", () => { if (caja.classList.contains("plegado")) caja.style.maxHeight = ""; }, { once: true });
+      const art = b.closest(".aviso-item");
+      if (art && art.getBoundingClientRect().top < 80) art.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    b.setAttribute("aria-expanded", String(abrir));
+    b.textContent = abrir ? "Leer menos" : "Leer más";
+    b.closest(".aviso-item")?.classList.toggle("abierto", abrir);
+  });
+
   /* =============================================================== Inicio */
   async function iniciar() {
     pintarCabecera();
@@ -1335,13 +1409,16 @@
     $$(".hero canvas, .page-hero canvas").forEach((c) => campoHexagonos(c, { densidad: c.closest(".hero") ? 30 : 16 }));
     efectosTarjetas();
     revelar();
-    $$("[data-citas]").forEach(citas);
+
     $$("form[data-envio]").forEach(formularioEnvio);
     $$("[data-reproductor]").forEach(reproductor);
     $$("[data-suscripcion]").forEach(suscripcion);
     if (PAGINA === "panel") return; // el panel carga sus propios datos
 
+    marcarEditables();
     const items = await cargarContenido();
+    aplicarTextos(items);
+    $$("[data-citas]").forEach(citas);
     $$(".biblioteca[data-seccion]").forEach((r) => biblioteca(r, items));
     $$("[data-ultimos]").forEach((r) => ultimos(r, items));
     $$("[data-avisos]").forEach((r) => paginaAvisos(r, items));
@@ -1349,6 +1426,7 @@
     $$("[data-enlaces-provincia]").forEach((r) => enlacesProvincia(r, items));
     $$("[data-grupos]").forEach((r) => grupos(r, items));
     $$("[data-elenco]").forEach((r) => elenco(r, items));
+    $$("[data-consejo]").forEach((r) => consejo(r, items));
     $$("[data-avisos-inicio]").forEach((r) => avisosInicio(r, items));
     $$("[data-agenda]").forEach((r) => agenda(r, items));
     $$("[data-ambitos]").forEach((r) => barraAmbitos(r, items));

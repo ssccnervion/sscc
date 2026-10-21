@@ -2,7 +2,7 @@
    PVA · lector tipo libro con índice lateral y vídeos del «PVA ¡vivo!»
    Usa PDF.js para mostrar el documento original página a página.
    ========================================================================= */
-(function () {
+(async function () {
   "use strict";
   const D = window.SSCC_PVA;
   const S = window.SSCC;
@@ -10,6 +10,21 @@
   const { esc, $, $$, I } = S;
   const lector = $("#pva-lector");
   if (!lector) return;
+
+  // Vídeos del «PVA ¡vivo!» añadidos desde el panel (sección "pva-video": lugar = "e13", url = YouTube)
+  try {
+    const items = await S.cargarContenido();
+    const nuevos = {};
+    items.filter((it) => it.seccion === "pva-video" && it.url).forEach((it) => {
+      const id = (it.url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{6,})/) || [])[1];
+      const k = String(it.lugar || "").trim().toLowerCase().replace(/^(\d)/, "e$1");
+      if (id && k) nuevos[k] = id;
+    });
+    D.indice.forEach((sec) => {
+      (sec.caps || []).forEach((c) => c.arts.forEach((a) => { if (nuevos[a.k]) a.v = nuevos[a.k]; }));
+      (sec.arts || []).forEach((a) => { if (nuevos[a.k]) a.v = nuevos[a.k]; });
+    });
+  } catch (e) { /* sin conexión: se usan los vídeos del archivo */ }
 
   const ICO_VIDEO = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
   const verVideo = (a) => S.abrir({ titulo: `Estatuto · Artículo ${a.n} · ${a.t}`, url: `https://youtu.be/${a.v}`, tipo: "video" });
