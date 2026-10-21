@@ -140,7 +140,7 @@
           </ul>
         </div>
         <div class="final">
-          <span>© ${anio} Asociación de Salesianos Cooperadores · ${esc(CFG.centro)} · <a href="panel.html">Gestión</a></span>
+          <span>© ${anio} Asociación de Salesianos Cooperadores · ${esc(CFG.centro)}</span>
           <span><img src="assets/img/logo-csjm.png" alt="Cooperación Salesiana para los Jóvenes del Mundo"></span>
         </div>
       </div>
