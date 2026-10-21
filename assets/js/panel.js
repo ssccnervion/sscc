@@ -222,20 +222,34 @@
   }
 
   /* ------------------------------------------------------------ Publicar */
+  // Las opciones del panel siguen el mismo orden y numeración que el menú de la web
+  const GRUPOS = [
+    { n: "1", t: "Material", items: [["temas", "1A"], ["oraciones", "1B"], ["documentos", "1C"], ["pva-video", "1D"]] },
+    { n: "2", t: "Calendario", items: [["calendario", "2"]] },
+    { n: "3", t: "Quiénes somos", items: [["consejo", "3B"], ["elenco", "3B"], ["grupos", "3C"]] },
+    { n: "4", t: "Provincia", items: [["provincia", "4"], ["provincia-web", "4"]] },
+    { n: "5", t: "Avisos", items: [["avisos", "5"], ["novedades", "5"]] },
+    { n: "", t: "Toda la web", items: [["textos", ""]] }
+  ];
+  const TEXTOS_OPCION = { nombre: "Textos de la web", desc: "Portada, Asociación, contacto, citas…", ico: '<path d="M4 7V5h16v2M9 19h6M12 5v14"/>' };
+
   function vistaPublicar(cuerpo, seccionInicial, datosIniciales) {
+    const opcion = ([k, cod]) => {
+      const v = k === "textos" ? TEXTOS_OPCION : SECCIONES[k];
+      return `<button type="button" class="opcion-seccion" data-sec="${k}">
+        <span class="os-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${v.ico}</svg></span>
+        <b>${cod ? `<span class="os-cod">${cod}</span>` : ""}${v.nombre}</b><small>${v.desc}</small>
+      </button>`;
+    };
     cuerpo.innerHTML = `
       <section class="paso">
         <h3><span class="paso-num">1</span> ¿Qué quieres publicar?</h3>
-        <div class="elige-seccion">
-          ${Object.entries(SECCIONES).map(([k, v]) => `
-            <button type="button" class="opcion-seccion" data-sec="${k}">
-              <span class="os-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${v.ico}</svg></span>
-              <b>${v.nombre}</b><small>${v.desc}</small>
-            </button>`).join("")}
-            <button type="button" class="opcion-seccion" data-sec="textos">
-              <span class="os-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h16v2M9 19h6M12 5v14"/></svg></span>
-              <b>Textos de la web</b><small>Portada, Asociación, contacto, citas…</small>
-            </button>
+        <div class="grupos-publicar">
+          ${GRUPOS.map((g) => `
+            <div class="grupo-publicar">
+              <h4>${g.n ? `<span class="gp-num">${g.n}</span>` : ""}${g.t}</h4>
+              <div class="elige-seccion">${g.items.map(opcion).join("")}</div>
+            </div>`).join("")}
         </div>
       </section>
       <div class="formulario-publicar"></div>`;
@@ -462,7 +476,7 @@
       <section class="paso">
         <div class="publicado-cab">
           <h3>Lo que has publicado desde el panel</h3>
-          <select class="filtro-sec"><option value="">Todas las secciones</option>${Object.entries(SECCIONES).map(([k, v]) => `<option value="${k}">${v.nombre}</option>`).join("")}</select>
+          <select class="filtro-sec"><option value="">Todas las secciones</option>${GRUPOS.map((g) => `<optgroup label="${g.n ? g.n + " · " : ""}${g.t}">${g.items.map(([k]) => `<option value="${k}">${k === "textos" ? TEXTOS_OPCION.nombre : SECCIONES[k].nombre}</option>`).join("")}</optgroup>`).join("")}</select>
         </div>
         <p class="nota">Editar permite cambiar datos o foto. Ocultar lo quita de la web pero lo guarda. Borrar lo elimina también de Drive (va a la papelera).</p>
         ${!datos.importado ? `<div class="importar-caja"><div><b>Hay ${importable().length} elementos en el archivo de la web que aún no se pueden editar aquí.</b><span>Pásalos al panel (una sola vez) y desde entonces todo se podrá editar, ocultar o borrar desde aquí.</span></div><button class="btn btn--oro btn--sm importar" type="button">Pasar todo al panel</button></div>` : ""}
