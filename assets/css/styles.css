@@ -1416,6 +1416,14 @@ body[data-pagina="panel"] .toast-aviso { display: none; }
     padding: calc(100px + env(safe-area-inset-top)) var(--gutter) calc(40px + env(safe-area-inset-bottom));
   }
   .menu > li > a { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+  /* Franja fija tras el logo: el menú se desliza por debajo y no asoma detrás */
+  .cabecera::before {
+    content: ""; position: fixed; inset: 0 0 auto 0; z-index: 115; pointer-events: none;
+    height: calc(88px + env(safe-area-inset-top));
+    background: linear-gradient(var(--azul-hondo) 78%, transparent);
+    opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0s 0.3s;
+  }
+  .menu-abierto .cabecera::before { opacity: 1; visibility: visible; transition: opacity 0.4s 0.25s; }
 }
 
 /* ======================================================= PVA · LECTOR LIBRO */
